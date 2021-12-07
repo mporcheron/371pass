@@ -2,9 +2,8 @@
 
 BIN_DIR="bin"
 SRC_DIR="src"
-LIB_DIR="lib"
 TESTS_DIR="tests"
-SOURCE_FILES="${SRC_DIR}/pass.cpp"
+SOURCE_FILES="${SRC_DIR}/371pass.cpp ${SRC_DIR}/wallet.cpp ${SRC_DIR}/category.cpp ${SRC_DIR}/item.cpp"
 MAIN_FILE="${SRC_DIR}/main.cpp"
 EXECUTABLE="./${BIN_DIR}/371pass"
 
@@ -22,11 +21,11 @@ elif [ $# -eq 1 ]; then
 
     # Do we need to compile Catch2?
     if [ ! -f ./${BIN_DIR}/catch.o ]; then
-      g++ --std=c++17 -c ./lib/catch_main.cpp -o ./${BIN_DIR}/catch.o
+      g++ --std=c++17 -c ./src/lib_catch_main.cpp -o ${MAIN_FILE}
     fi
   fi
 fi
 
 mkdir -p ${BIN_DIR}
 rm ${EXECUTABLE} 2> /dev/null
-g++ --std=c++14 -pedantic -Wall  ${SOURCE_FILES} ${MAIN_FILE} -o ${EXECUTABLE}
+g++ --std=c++17 -pedantic -Wall  ${SOURCE_FILES} ${MAIN_FILE} -o ${EXECUTABLE}

@@ -1,7 +1,7 @@
 @ECHO on
 
 SET bin_dir=bin
-SET src_dir=tests
+SET src_dir=src
 SET tests_dir=tests
 SET source_files=%src_dir%\pass.cpp
 SET main_file==%src_dir%main.cpp
@@ -17,7 +17,7 @@ IF %testStr%==test (
   SET executable=%bin_dir%\371pass-test.exe
 
   IF NOT EXIST %bin_dir%\catch.o (
-     g++ --std=c++17 -c lib\catch_main.cpp -o %bin_dir%\catch.o
+     g++ --std=c++17 -c .\%src_dir%\lib_catch_main.hpp -o %bin_dir%\catch.o
   )
 )
 
