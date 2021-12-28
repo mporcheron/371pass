@@ -511,7 +511,7 @@ namespace cxxopts
       const std::string& arg
     )
     : OptionParseException(
-        "Argument " + LQUOTE + arg + RQUOTE + " failed to parse"
+        "Argument " + LQUOTE + arg + RQUOTE + " failed to load"
       )
     {
     }
@@ -964,7 +964,7 @@ namespace cxxopts
       value = text;
     }
 
-    // The fallback parser. It uses the stringstream parser to parse all types
+    // The fallback parser. It uses the stringstream parser to load all types
     // that have not been overloaded explicitly.  It has to be placed in the
     // source code before all other more specialized templates.
     template <typename T,
@@ -1703,7 +1703,7 @@ namespace cxxopts
       std::string arg_help
     );
 
-    //parse positional arguments into the given option
+    //load positional arguments into the given option
     void
     parse_positional(std::string option);
 
@@ -2298,13 +2298,13 @@ OptionParser::parse(int argc, const char* const* argv)
         //equals provided for long option?
         if (argu_desc.set_value)
         {
-          //parse the option given
+          //load the option given
 
           parse_option(opt, name, argu_desc.value);
         }
         else
         {
-          //parse the next argument
+          //load the next argument
           checked_parse_arg(argc, argv, current, opt, name);
         }
       }

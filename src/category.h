@@ -14,6 +14,8 @@
 #include <map>
 #include <string>
 
+#include "lib_json.hpp"
+
 #include "item.h"
 
 using ItemContainer = std::map<std::string, Item>;
@@ -26,17 +28,31 @@ public:
   Category(std::string ident);
   ~Category() = default;
 
-  unsigned int inline size() {
+  inline const std::string& getIdent() const noexcept {
+    return ident;
+  }
+
+  unsigned int inline size() const noexcept {
     return items.size();
   }
 
-  unsigned int inline empty() {
+  unsigned int inline empty() const noexcept {
     return items.empty();
   }
 
-  Item& addItem(const std::string& ident);
+  Item& newItem(const std::string& ident);
+  bool addItem(Item ident);
+  Item& getItem(const std::string& ident);
+  bool deleteItem(const std::string& ident);
 
+  bool inline containsItem(const std::string& ident) const noexcept {
+    return items.count(ident) != 0;
+  }
 
+  nlohmann::json json() const;
+  std::string str() const;
+
+  friend bool operator==(const Category& c1, const Category& c2);
 
   // Wrappers for iterating over the nested container
   inline ItemContainer::iterator begin() {

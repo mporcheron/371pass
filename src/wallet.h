@@ -16,6 +16,8 @@
 #include <map>
 #include <string>
 
+#include "lib_json.hpp"
+
 #include "category.h"
 
 using CategoryContainer = std::map<std::string, Category>;
@@ -27,20 +29,34 @@ public:
   Wallet();
   ~Wallet() = default;
 
-  unsigned int inline size() const {
+  unsigned int inline size() const noexcept {
     return categories.size();
   }
 
-  unsigned int inline empty() const {
+  unsigned int inline empty() const noexcept {
     return categories.empty();
   }
 
-  Category& addCategory(const std::string& ident);
+  Category& newCategory(const std::string& ident);
+  bool addCategory(Category category);
+  Category& getCategory(const std::string& ident);
+  bool deleteCategory(const std::string& ident);
 
-  void parse(std::string& filePath);
+  bool inline containsCategory(const std::string& ident) const noexcept {
+    return categories.count(ident) != 0;
+  }
+
+  void load(const std::string& filePath);
+  bool save(const std::string& filePath);
+
+  nlohmann::json json() const;
   std::string str() const;
 
   // Wrappers for iterating over the nested container
+  inline CategoryContainer::iterator find(const std::string& ident) {
+    return categories.find(ident);
+  }
+
   inline CategoryContainer::iterator begin() {
     return categories.begin();
   }

@@ -7,7 +7,7 @@
 //
 // Canvas: https://canvas.swansea.ac.uk/courses/15581
 // -----------------------------------------------------
-// An Item class contains multiple 'entries' as
+// An Item class containsEntry multiple 'entries' as
 // key/value pairs (e.g., a key might be 'username'
 // and a value would be the username, another might be
 // 'url' and the value is the website address the
@@ -21,6 +21,8 @@
 #include <string>
 #include <tuple>
 
+#include "lib_json.hpp"
+
 using EntriesContainer = std::map<std::string, std::string>;
 
 class Item {
@@ -31,16 +33,30 @@ public:
   Item(std::string ident);
   ~Item() = default;
 
+  inline const std::string& getIdent() const noexcept {
+    return ident;
+  }
 
-  unsigned int inline size() {
+  unsigned int inline size() const noexcept {
     return entries.size();
   }
 
-  unsigned int inline empty() {
+  unsigned int inline empty() const noexcept {
     return entries.empty();
   }
 
   bool addEntry(std::string ident, std::string value);
+  const std::string& getEntry(const std::string& ident) const;
+  bool deleteEntry(const std::string& ident);
+
+  bool inline containsEntry(const std::string& ident) const noexcept {
+    return entries.count(ident) != 0;
+  }
+
+  nlohmann::json json() const;
+  std::string str() const;
+
+  friend bool operator==(const Item& lhs, const Item& rhs);
 
   // Wrappers for iterating over the nested container
   inline EntriesContainer::iterator begin() {

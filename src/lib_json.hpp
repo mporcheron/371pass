@@ -2292,7 +2292,7 @@ using is_detected_convertible =
 }  // namespace nlohmann
 
 
-// This file contains all internal macro definitions
+// This file containsEntry all internal macro definitions
 // You MUST include macro_unscope.hpp at the end of json.hpp to undef all of them
 
 // exclude unsupported compilers
@@ -2743,7 +2743,7 @@ exception ids. It is used as the base class for all exceptions thrown by the
 exceptions.
 
 Subclasses:
-- @ref parse_error for exceptions indicating a parse error
+- @ref parse_error for exceptions indicating a load error
 - @ref invalid_iterator for exceptions indicating errors with iterators
 - @ref type_error for exceptions indicating executing a member function with
                   a wrong type
@@ -2853,9 +2853,9 @@ class exception : public std::exception
 };
 
 /*!
-@brief exception indicating a parse error
+@brief exception indicating a load error
 
-This exception is thrown by the library when a parse error occurs. Parse errors
+This exception is thrown by the library when a load error occurs. Parse errors
 can occur during the deserialization of JSON text, CBOR, MessagePack, as well
 as when using JSON Patch.
 
@@ -2866,20 +2866,20 @@ Exceptions have ids 1xx.
 
 name / id                      | example message | description
 ------------------------------ | --------------- | -------------------------
-json.exception.parse_error.101 | parse error at 2: unexpected end of input; expected string literal | This error indicates a syntax error while deserializing a JSON text. The error message describes that an unexpected token (character) was encountered, and the member @a byte indicates the error position.
-json.exception.parse_error.102 | parse error at 14: missing or wrong low surrogate | JSON uses the `\uxxxx` format to describe Unicode characters. Code points above above 0xFFFF are split into two `\uxxxx` entries ("surrogate pairs"). This error indicates that the surrogate pair is incomplete or contains an invalid code point.
-json.exception.parse_error.103 | parse error: code points above 0x10FFFF are invalid | Unicode supports code points up to 0x10FFFF. Code points above 0x10FFFF are invalid.
-json.exception.parse_error.104 | parse error: JSON patch must be an array of objects | [RFC 6902](https://tools.ietf.org/html/rfc6902) requires a JSON Patch document to be a JSON document that represents an array of objects.
-json.exception.parse_error.105 | parse error: operation must have string member 'op' | An operation of a JSON Patch document must contain exactly one "op" member, whose value indicates the operation to perform. Its value must be one of "add", "remove", "replace", "move", "copy", or "test"; other values are errors.
-json.exception.parse_error.106 | parse error: array index '01' must not begin with '0' | An array index in a JSON Pointer ([RFC 6901](https://tools.ietf.org/html/rfc6901)) may be `0` or any number without a leading `0`.
-json.exception.parse_error.107 | parse error: JSON pointer must be empty or begin with '/' - was: 'foo' | A JSON Pointer must be a Unicode string containing a sequence of zero or more reference tokens, each prefixed by a `/` character.
-json.exception.parse_error.108 | parse error: escape character '~' must be followed with '0' or '1' | In a JSON Pointer, only `~0` and `~1` are valid escape sequences.
-json.exception.parse_error.109 | parse error: array index 'one' is not a number | A JSON Pointer array index must be a number.
-json.exception.parse_error.110 | parse error at 1: cannot read 2 bytes from vector | When parsing CBOR or MessagePack, the byte vector ends before the complete value has been read.
-json.exception.parse_error.112 | parse error at 1: error reading CBOR; last byte: 0xF8 | Not all types of CBOR or MessagePack are supported. This exception occurs if an unsupported byte was read.
-json.exception.parse_error.113 | parse error at 2: expected a CBOR string; last byte: 0x98 | While parsing a map key, a value that is not a string has been read.
-json.exception.parse_error.114 | parse error: Unsupported BSON record type 0x0F | The parsing of the corresponding BSON record type is not implemented (yet).
-json.exception.parse_error.115 | parse error at byte 5: syntax error while parsing UBJSON high-precision number: invalid number text: 1A | A UBJSON high-precision number could not be parsed.
+json.exception.parse_error.101 | load error at 2: unexpected end of input; expected string literal | This error indicates a syntax error while deserializing a JSON text. The error message describes that an unexpected token (character) was encountered, and the member @a byte indicates the error position.
+json.exception.parse_error.102 | load error at 14: missing or wrong low surrogate | JSON uses the `\uxxxx` format to describe Unicode characters. Code points above above 0xFFFF are split into two `\uxxxx` entries ("surrogate pairs"). This error indicates that the surrogate pair is incomplete or containsEntry an invalid code point.
+json.exception.parse_error.103 | load error: code points above 0x10FFFF are invalid | Unicode supports code points up to 0x10FFFF. Code points above 0x10FFFF are invalid.
+json.exception.parse_error.104 | load error: JSON patch must be an array of objects | [RFC 6902](https://tools.ietf.org/html/rfc6902) requires a JSON Patch document to be a JSON document that represents an array of objects.
+json.exception.parse_error.105 | load error: operation must have string member 'op' | An operation of a JSON Patch document must contain exactly one "op" member, whose value indicates the operation to perform. Its value must be one of "add", "remove", "replace", "move", "copy", or "test"; other values are errors.
+json.exception.parse_error.106 | load error: array index '01' must not begin with '0' | An array index in a JSON Pointer ([RFC 6901](https://tools.ietf.org/html/rfc6901)) may be `0` or any number without a leading `0`.
+json.exception.parse_error.107 | load error: JSON pointer must be empty or begin with '/' - was: 'foo' | A JSON Pointer must be a Unicode string containing a sequence of zero or more reference tokens, each prefixed by a `/` character.
+json.exception.parse_error.108 | load error: escape character '~' must be followed with '0' or '1' | In a JSON Pointer, only `~0` and `~1` are valid escape sequences.
+json.exception.parse_error.109 | load error: array index 'one' is not a number | A JSON Pointer array index must be a number.
+json.exception.parse_error.110 | load error at 1: cannot read 2 bytes from vector | When parsing CBOR or MessagePack, the byte vector ends before the complete value has been read.
+json.exception.parse_error.112 | load error at 1: error reading CBOR; last byte: 0xF8 | Not all types of CBOR or MessagePack are supported. This exception occurs if an unsupported byte was read.
+json.exception.parse_error.113 | load error at 2: expected a CBOR string; last byte: 0x98 | While parsing a map key, a value that is not a string has been read.
+json.exception.parse_error.114 | load error: Unsupported BSON record type 0x0F | The parsing of the corresponding BSON record type is not implemented (yet).
+json.exception.parse_error.115 | load error at byte 5: syntax error while parsing UBJSON high-precision number: invalid number text: 1A | A UBJSON high-precision number could not be parsed.
 
 @note For an input with n bytes, 1 is the index of the first character and n+1
       is the index of the terminating null byte or the end of file. This also
@@ -2901,7 +2901,7 @@ class parse_error : public exception
 {
   public:
     /*!
-    @brief create a parse error exception
+    @brief create a load error exception
     @param[in] id_       the id of the exception
     @param[in] pos       the position where the error occurred (or with
                          chars_read_total=0 if the position cannot be
@@ -2912,7 +2912,7 @@ class parse_error : public exception
     template<typename BasicJsonType>
     static parse_error create(int id_, const position_t& pos, const std::string& what_arg, const BasicJsonType& context)
     {
-        std::string w = exception::name("parse_error", id_) + "parse error" +
+        std::string w = exception::name("parse_error", id_) + "load error" +
                         position_string(pos) + ": " + exception::diagnostics(context) + what_arg;
         return parse_error(id_, pos.chars_read_total, w.c_str());
     }
@@ -2920,14 +2920,14 @@ class parse_error : public exception
     template<typename BasicJsonType>
     static parse_error create(int id_, std::size_t byte_, const std::string& what_arg, const BasicJsonType& context)
     {
-        std::string w = exception::name("parse_error", id_) + "parse error" +
+        std::string w = exception::name("parse_error", id_) + "load error" +
                         (byte_ != 0 ? (" at byte " + std::to_string(byte_)) : "") +
                         ": " + exception::diagnostics(context) + what_arg;
         return parse_error(id_, byte_, w.c_str());
     }
 
     /*!
-    @brief byte index of the parse error
+    @brief byte index of the load error
 
     The byte index of the last read character in the input file.
 
@@ -2977,7 +2977,7 @@ json.exception.invalid_iterator.214 | cannot get value | Cannot get value for it
 caught.,invalid_iterator}
 
 @sa - @ref exception for the base class of the library exceptions
-@sa - @ref parse_error for exceptions indicating a parse error
+@sa - @ref parse_error for exceptions indicating a load error
 @sa - @ref type_error for exceptions indicating executing a member function with
                     a wrong type
 @sa - @ref out_of_range for exceptions indicating access out of the defined range
@@ -3033,7 +3033,7 @@ json.exception.type_error.317 | JSON value cannot be serialized to requested for
 caught.,type_error}
 
 @sa - @ref exception for the base class of the library exceptions
-@sa - @ref parse_error for exceptions indicating a parse error
+@sa - @ref parse_error for exceptions indicating a load error
 @sa - @ref invalid_iterator for exceptions indicating errors with iterators
 @sa - @ref out_of_range for exceptions indicating access out of the defined range
 @sa - @ref other_error for exceptions indicating other library errors
@@ -3080,7 +3080,7 @@ json.exception.out_of_range.409 | BSON key cannot contain code point U+0000 (at 
 caught.,out_of_range}
 
 @sa - @ref exception for the base class of the library exceptions
-@sa - @ref parse_error for exceptions indicating a parse error
+@sa - @ref parse_error for exceptions indicating a load error
 @sa - @ref invalid_iterator for exceptions indicating errors with iterators
 @sa - @ref type_error for exceptions indicating executing a member function with
                     a wrong type
@@ -3116,7 +3116,7 @@ name / id                      | example message | description
 json.exception.other_error.501 | unsuccessful: {"op":"test","path":"/baz", "value":"bar"} | A JSON Patch operation 'test' failed. The unsuccessful operation is also printed.
 
 @sa - @ref exception for the base class of the library exceptions
-@sa - @ref parse_error for exceptions indicating a parse error
+@sa - @ref parse_error for exceptions indicating a load error
 @sa - @ref invalid_iterator for exceptions indicating errors with iterators
 @sa - @ref type_error for exceptions indicating executing a member function with
                     a wrong type
@@ -4640,7 +4640,7 @@ namespace detail
 
 /*
  * Note all external_constructor<>::construct functions need to call
- * j.m_value.destroy(j.m_type) to avoid a memory leak in case j contains an
+ * j.m_value.destroy(j.m_type) to avoid a memory leak in case j containsEntry an
  * allocated value (e.g., a string). See bug issue
  * https://github.com/nlohmann/json/issues/2865 for more information.
  */
@@ -6028,7 +6028,7 @@ struct json_sax
     virtual bool end_array() = 0;
 
     /*!
-    @brief a parse error occurred
+    @brief a load error occurred
     @param[in] position    the position in the input where the error occurs
     @param[in] last_token  the last read token
     @param[in] ex          an exception object describing the error
@@ -6054,11 +6054,11 @@ namespace detail
 
 This class implements the @ref json_sax interface and processes the SAX events
 to create a JSON value which makes it basically a DOM parser. The structure or
-hierarchy of the JSON value is managed by the stack `ref_stack` which contains
+hierarchy of the JSON value is managed by the stack `ref_stack` which containsEntry
 a pointer to the respective array or object for each recursion depth.
 
 After successful parsing, the value that is passed by reference to the
-constructor contains the parsed value.
+constructor containsEntry the parsed value.
 
 @tparam BasicJsonType  the JSON type
 */
@@ -6075,7 +6075,7 @@ class json_sax_dom_parser
     /*!
     @param[in,out] r  reference to a JSON value that is manipulated while
                        parsing
-    @param[in] allow_exceptions_  whether parse errors yield exceptions
+    @param[in] allow_exceptions_  whether load errors yield exceptions
     */
     explicit json_sax_dom_parser(BasicJsonType& r, const bool allow_exceptions_ = true)
         : root(r), allow_exceptions(allow_exceptions_)
@@ -6197,7 +6197,7 @@ class json_sax_dom_parser
     /*!
     @invariant If the ref stack is empty, then the passed value will be the new
                root.
-    @invariant If the ref stack contains a value, then it is an array or an
+    @invariant If the ref stack containsEntry a value, then it is an array or an
                object to which we can add elements
     */
     template<typename Value>
@@ -6453,7 +6453,7 @@ class json_sax_dom_callback_parser
 
     @invariant If the ref stack is empty, then the passed value will be the new
                root.
-    @invariant If the ref stack contains a value, then it is an array or an
+    @invariant If the ref stack containsEntry a value, then it is an array or an
                object to which we can add elements
 
     @return pair of boolean (whether value should be kept) and pointer (to the
@@ -6671,7 +6671,7 @@ class lexer_base
         end_object,       ///< the character for object end `}`
         name_separator,   ///< the name separator `:`
         value_separator,  ///< the value separator `,`
-        parse_error,      ///< indicating a parse error
+        parse_error,      ///< indicating a load error
         end_of_input,     ///< indicating the end of the input buffer
         literal_or_value  ///< a literal or the begin of a value (only for diagnostics)
     };
@@ -6710,7 +6710,7 @@ class lexer_base
             case token_type::value_separator:
                 return "','";
             case token_type::parse_error:
-                return "<parse error>";
+                return "<load error>";
             case token_type::end_of_input:
                 return "end of input";
             case token_type::literal_or_value:
@@ -6868,7 +6868,7 @@ class lexer : public lexer_base<BasicJsonType>
     @return token_type::value_string if string could be successfully scanned,
             token_type::parse_error otherwise
 
-    @note In case of errors, variable error_message contains a textual
+    @note In case of errors, variable error_message containsEntry a textual
           description.
     */
     token_type scan_string()
@@ -7571,7 +7571,7 @@ class lexer : public lexer_base<BasicJsonType>
 
     The state machine is realized with one label per state (prefixed with
     "scan_number_") and `goto` statements between them. The state machine
-    contains cycles, but any cycle can be left when EOF is read. Therefore,
+    containsEntry cycles, but any cycle can be left when EOF is read. Therefore,
     the function is guaranteed to terminate.
 
     During scanning, the read bytes are stored in token_buffer. This string is
@@ -7662,7 +7662,7 @@ scan_number_minus:
         }
 
 scan_number_zero:
-        // state: we just parse a zero (maybe with a leading minus sign)
+        // state: we just load a zero (maybe with a leading minus sign)
         switch (get())
         {
             case '.':
@@ -7867,7 +7867,7 @@ scan_number_done:
         char* endptr = nullptr; // NOLINT(cppcoreguidelines-pro-type-vararg,hicpp-vararg)
         errno = 0;
 
-        // try to parse integers first and fall back to floats
+        // try to load integers first and fall back to floats
         if (number_type == token_type::value_unsigned)
         {
             const auto x = std::strtoull(token_buffer.data(), &endptr, 10);
@@ -7901,7 +7901,7 @@ scan_number_done:
             }
         }
 
-        // this code is reached if we parse a floating-point number or if an
+        // this code is reached if we load a floating-point number or if an
         // integer conversion above failed
         strtof(value_float, token_buffer.data(), &endptr);
 
@@ -8107,7 +8107,7 @@ scan_number_done:
     {
         if (get() == 0xEF)
         {
-            // check if we completely parse the BOM
+            // check if we completely load the BOM
             return get() == 0xBB && get() == 0xBF;
         }
 
@@ -8474,7 +8474,7 @@ class binary_reader
     ~binary_reader() = default;
 
     /*!
-    @param[in] format  the binary format to parse
+    @param[in] format  the binary format to load
     @param[in] sax_    a SAX event processor
     @param[in] strict  whether to expect the input to be consumed completed
     @param[in] tag_handler  how to treat CBOR tags
@@ -10646,7 +10646,7 @@ class binary_reader
             number_vector.push_back(static_cast<char>(current));
         }
 
-        // parse number string
+        // load number string
         using ia_type = decltype(detail::input_adapter(number_vector));
         auto number_lexer = detail::lexer<BasicJsonType, ia_type>(detail::input_adapter(number_vector), false);
         const auto result_number = number_lexer.scan();
@@ -11126,7 +11126,7 @@ class parser
                             break;
                         }
 
-                        // parse key
+                        // load key
                         if (JSON_HEDLEY_UNLIKELY(last_token != token_type::value_string))
                         {
                             return sax->parse_error(m_lexer.get_position(),
@@ -11138,7 +11138,7 @@ class parser
                             return false;
                         }
 
-                        // parse separator (:)
+                        // load separator (:)
                         if (JSON_HEDLEY_UNLIKELY(get_token() != token_type::name_separator))
                         {
                             return sax->parse_error(m_lexer.get_position(),
@@ -11149,7 +11149,7 @@ class parser
                         // remember we are now inside an object
                         states.push_back(false);
 
-                        // parse values
+                        // load values
                         get_token();
                         continue;
                     }
@@ -11174,7 +11174,7 @@ class parser
                         // remember we are now inside an array
                         states.push_back(true);
 
-                        // parse values (no need to call get_token)
+                        // load values (no need to call get_token)
                         continue;
                     }
 
@@ -11291,7 +11291,7 @@ class parser
                 // comma -> next value
                 if (get_token() == token_type::value_separator)
                 {
-                    // parse a new value
+                    // load a new value
                     get_token();
                     continue;
                 }
@@ -11304,7 +11304,7 @@ class parser
                         return false;
                     }
 
-                    // We are done with this array. Before we can parse a
+                    // We are done with this array. Before we can load a
                     // new value, we need to evaluate the new state first.
                     // By setting skip_to_state_evaluation to false, we
                     // are effectively jumping to the beginning of this if.
@@ -11324,7 +11324,7 @@ class parser
             // comma -> next value
             if (get_token() == token_type::value_separator)
             {
-                // parse key
+                // load key
                 if (JSON_HEDLEY_UNLIKELY(get_token() != token_type::value_string))
                 {
                     return sax->parse_error(m_lexer.get_position(),
@@ -11337,7 +11337,7 @@ class parser
                     return false;
                 }
 
-                // parse separator (:)
+                // load separator (:)
                 if (JSON_HEDLEY_UNLIKELY(get_token() != token_type::name_separator))
                 {
                     return sax->parse_error(m_lexer.get_position(),
@@ -11345,7 +11345,7 @@ class parser
                                             parse_error::create(101, m_lexer.get_position(), exception_message(token_type::name_separator, "object separator"), BasicJsonType()));
                 }
 
-                // parse values
+                // load values
                 get_token();
                 continue;
             }
@@ -11358,7 +11358,7 @@ class parser
                     return false;
                 }
 
-                // We are done with this object. Before we can parse a
+                // We are done with this object. Before we can load a
                 // new value, we need to evaluate the new state first.
                 // By setting skip_to_state_evaluation to false, we
                 // are effectively jumping to the beginning of this if.
@@ -18145,7 +18145,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     [RFC 8259](https://tools.ietf.org/html/rfc8259) describes numbers as follows:
     > The representation of numbers is similar to that used in most
     > programming languages. A number is represented in base 10 using decimal
-    > digits. It contains an integer component that may be prefixed with an
+    > digits. It containsEntry an integer component that may be prefixed with an
     > optional minus sign, which may be followed by a fraction part and/or an
     > exponent part. Leading zeros are not allowed. (...) Numeric values that
     > cannot be represented in the grammar below (such as Infinity and NaN)
@@ -18217,7 +18217,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     [RFC 8259](https://tools.ietf.org/html/rfc8259) describes numbers as follows:
     > The representation of numbers is similar to that used in most
     > programming languages. A number is represented in base 10 using decimal
-    > digits. It contains an integer component that may be prefixed with an
+    > digits. It containsEntry an integer component that may be prefixed with an
     > optional minus sign, which may be followed by a fraction part and/or an
     > exponent part. Leading zeros are not allowed. (...) Numeric values that
     > cannot be represented in the grammar below (such as Infinity and NaN)
@@ -18288,7 +18288,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     [RFC 8259](https://tools.ietf.org/html/rfc8259) describes numbers as follows:
     > The representation of numbers is similar to that used in most
     > programming languages. A number is represented in base 10 using decimal
-    > digits. It contains an integer component that may be prefixed with an
+    > digits. It containsEntry an integer component that may be prefixed with an
     > optional minus sign, which may be followed by a fraction part and/or an
     > exponent part. Leading zeros are not allowed. (...) Numeric values that
     > cannot be represented in the grammar below (such as Infinity and NaN)
@@ -18406,7 +18406,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
        - Binary values are represented as byte strings. Subtypes are serialized
          as tagged values.
     - MessagePack
-       - If a subtype is given and the binary array contains exactly 1, 2, 4, 8,
+       - If a subtype is given and the binary array containsEntry exactly 1, 2, 4, 8,
          or 16 elements, the fixext family (fixext1, fixext2, fixext4, fixext8)
          is used. For other sizes, the ext family (ext8, ext16, ext32) is used.
          The subtype is then added as singed 8-bit integer.
@@ -18876,7 +18876,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     - `array_end`: the parser read `]` and finished processing a JSON array
     - `value`: the parser finished reading a JSON value
 
-    @image html callback_events.png "Example when certain parse events are triggered"
+    @image html callback_events.png "Example when certain load events are triggered"
 
     @sa see @ref parser_callback_t for more information and examples
     */
@@ -18886,7 +18886,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @brief per-element parser callback type
 
     With a parser callback function, the result of parsing a JSON text can be
-    influenced. When passed to @ref parse, it is called on certain events
+    influenced. When passed to @ref load, it is called on certain events
     (passed as @ref parse_event_t via parameter @a event) with a set recursion
     depth @a depth and context JSON value @a parsed. The return value of the
     callback function is a boolean indicating whether the element that emitted
@@ -18905,7 +18905,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     parse_event_t::array_end | the parser read `]` and finished processing a JSON array | depth of the parent of the JSON array | the parsed JSON array
     parse_event_t::value | the parser finished reading a JSON value | depth of the value | the parsed JSON value
 
-    @image html callback_events.png "Example when certain parse events are triggered"
+    @image html callback_events.png "Example when certain load events are triggered"
 
     Discarding a value (i.e., returning `false`) has different effects
     depending on the context in which function was called:
@@ -18920,14 +18920,14 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @param[in] event  an event of type parse_event_t indicating the context in
     the callback function has been called
 
-    @param[in,out] parsed  the current intermediate parse result; note that
+    @param[in,out] parsed  the current intermediate load result; note that
     writing to this value has no effect for parse_event_t::key events
 
     @return Whether the JSON value which called the function during parsing
     should be kept (`true`) or not (`false`). In the latter case, it is either
     skipped completely or replaced by an empty discarded object.
 
-    @sa see @ref parse for examples
+    @sa see @ref load for examples
 
     @since version 1.0.0
     */
@@ -19209,7 +19209,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     is set to `true`, this parameter has no effect
 
     @throw type_error.301 if @a type_deduction is `false`, @a manual_type is
-    `value_t::object`, but @a init contains an element which is not a pair
+    `value_t::object`, but @a init containsEntry an element which is not a pair
     whose first element is a string. In this case, the constructor could not
     create an object. If @a type_deduction would have be `true`, an array
     would have been created. See @ref object(initializer_list_t)
@@ -22019,7 +22019,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     @liveexample{The example shows how `find()` is used.,find__key_type}
 
-    @sa see @ref contains(KeyT&&) const -- checks whether a key exists
+    @sa see @ref containsEntry(KeyT&&) const -- checks whether a key exists
 
     @since version 1.0.0
     */
@@ -22099,10 +22099,10 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     @complexity Logarithmic in the size of the JSON object.
 
-    @liveexample{The following code shows an example for `contains()`.,contains}
+    @liveexample{The following code shows an example for `containsEntry()`.,containsItem}
 
     @sa see @ref find(KeyT&&) -- returns an iterator to an object element
-    @sa see @ref contains(const json_pointer&) const -- checks the existence for a JSON pointer
+    @sa see @ref containsEntry(const json_pointer&) const -- checks the existence for a JSON pointer
 
     @since version 3.6.0
     */
@@ -22126,16 +22126,16 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @return true if the JSON pointer can be resolved to a stored value, false
     otherwise.
 
-    @post If `j.contains(ptr)` returns true, it is safe to call `j[ptr]`.
+    @post If `j.containsEntry(ptr)` returns true, it is safe to call `j[ptr]`.
 
     @throw parse_error.106   if an array index begins with '0'
     @throw parse_error.109   if an array index was not a number
 
     @complexity Logarithmic in the size of the JSON object.
 
-    @liveexample{The following code shows an example for `contains()`.,contains_json_pointer}
+    @liveexample{The following code shows an example for `containsEntry()`.,contains_json_pointer}
 
-    @sa see @ref contains(KeyT &&) const -- checks the existence of a key
+    @sa see @ref containsEntry(KeyT &&) const -- checks the existence of a key
 
     @since version 3.7.0
     */
@@ -22609,7 +22609,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
             array       | result of function `array_t::empty()`
 
     @liveexample{The following code uses `empty()` to check if a JSON
-    object contains any elements.,empty}
+    object containsEntry any elements.,empty}
 
     @complexity Constant, as long as @ref array_t and @ref object_t satisfy
     the Container concept; that is, their `empty()` functions have constant
@@ -23075,7 +23075,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     This function allows to use `push_back` with an initializer list. In case
 
     1. the current value is an object,
-    2. the initializer list @a init contains only two elements, and
+    2. the initializer list @a init containsEntry only two elements, and
     3. the first element of @a init is a string,
 
     @a init is converted into an object element and added using
@@ -24358,16 +24358,16 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     which is used to control the deserialization by filtering unwanted values
     (optional)
     @param[in] allow_exceptions  whether to throw exceptions in case of a
-    parse error (optional, true by default)
+    load error (optional, true by default)
     @param[in] ignore_comments  whether comments should be ignored and treated
-    like whitespace (true) or yield a parse error (true); (optional, false by
+    like whitespace (true) or yield a load error (true); (optional, false by
     default)
 
-    @return deserialized JSON value; in case of a parse error and
+    @return deserialized JSON value; in case of a load error and
             @a allow_exceptions set to `false`, the return value will be
             value_t::discarded.
 
-    @throw parse_error.101 if a parse error occurs; example: `""unexpected end
+    @throw parse_error.101 if a load error occurs; example: `""unexpected end
     of input; expected string literal""`
     @throw parse_error.102 if to_unicode fails or surrogate error
     @throw parse_error.103 if to_unicode fails
@@ -24378,16 +24378,16 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     @note A UTF-8 byte order mark is silently ignored.
 
-    @liveexample{The example below demonstrates the `parse()` function reading
+    @liveexample{The example below demonstrates the `load()` function reading
     from an array.,parse__array__parser_callback_t}
 
-    @liveexample{The example below demonstrates the `parse()` function with
+    @liveexample{The example below demonstrates the `load()` function with
     and without callback function.,parse__string__parser_callback_t}
 
-    @liveexample{The example below demonstrates the `parse()` function with
+    @liveexample{The example below demonstrates the `load()` function with
     and without callback function.,parse__istream__parser_callback_t}
 
-    @liveexample{The example below demonstrates the `parse()` function reading
+    @liveexample{The example below demonstrates the `load()` function reading
     from a contiguous container.,parse__contiguouscontainer__parser_callback_t}
 
     @since version 2.0.3 (contiguous containers); version 3.9.0 allowed to
@@ -24417,16 +24417,16 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     which is used to control the deserialization by filtering unwanted values
     (optional)
     @param[in] allow_exceptions  whether to throw exceptions in case of a
-    parse error (optional, true by default)
+    load error (optional, true by default)
     @param[in] ignore_comments  whether comments should be ignored and treated
-    like whitespace (true) or yield a parse error (true); (optional, false by
+    like whitespace (true) or yield a load error (true); (optional, false by
     default)
 
-    @return deserialized JSON value; in case of a parse error and
+    @return deserialized JSON value; in case of a load error and
             @a allow_exceptions set to `false`, the return value will be
             value_t::discarded.
 
-    @throw parse_error.101 if a parse error occurs; example: `""unexpected end
+    @throw parse_error.101 if a load error occurs; example: `""unexpected end
     of input; expected string literal""`
     @throw parse_error.102 if to_unicode fails or surrogate error
     @throw parse_error.103 if to_unicode fails
@@ -24459,9 +24459,9 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /*!
     @brief check if the input is valid JSON
 
-    Unlike the @ref parse(InputType&&, const parser_callback_t,const bool)
+    Unlike the @ref load(InputType&&, const parser_callback_t,const bool)
     function, this function neither throws an exception in case of invalid JSON
-    input (i.e., a parse error) nor creates diagnostic information.
+    input (i.e., a load error) nor creates diagnostic information.
 
     @tparam InputType A compatible input, for instance
     - an std::istream object
@@ -24473,7 +24473,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     @param[in] i input to read from
     @param[in] ignore_comments  whether comments should be ignored and treated
-    like whitespace (true) or yield a parse error (true); (optional, false by
+    like whitespace (true) or yield a load error (true); (optional, false by
     default)
 
     @return Whether the input read from @a i is valid JSON.
@@ -24523,15 +24523,15 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     @param[in] i  input to read from
     @param[in,out] sax  SAX event listener
-    @param[in] format  the format to parse (JSON, CBOR, MessagePack, or UBJSON)
+    @param[in] format  the format to load (JSON, CBOR, MessagePack, or UBJSON)
     @param[in] strict  whether the input has to be consumed completely
     @param[in] ignore_comments  whether comments should be ignored and treated
-    like whitespace (true) or yield a parse error (true); (optional, false by
+    like whitespace (true) or yield a load error (true); (optional, false by
     default); only applies to the JSON file format.
 
     @return return value of the last processed SAX event
 
-    @throw parse_error.101 if a parse error occurs; example: `""unexpected end
+    @throw parse_error.101 if a load error occurs; example: `""unexpected end
     of input; expected string literal""`
     @throw parse_error.102 if to_unicode fails or surrogate error
     @throw parse_error.103 if to_unicode fails
@@ -24624,7 +24624,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @liveexample{The example below shows how a JSON value is constructed by
     reading a serialization from a stream.,operator_deserialize}
 
-    @sa parse(std::istream&, const parser_callback_t) for a variant with a
+    @sa load(std::istream&, const parser_callback_t) for a variant with a
     parser callback function to filter values while parsing
 
     @since version 1.0.0
@@ -24732,7 +24732,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     Serializes a given JSON value @a j to a byte vector using the CBOR (Concise
     Binary Object Representation) serialization format. CBOR is a binary
     serialization format which aims to be more compact than JSON itself, yet
-    more efficient to parse.
+    more efficient to load.
 
     The library uses the following mapping from JSON values types to
     CBOR types according to the CBOR specification (RFC 7049):
@@ -24846,7 +24846,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     Serializes a given JSON value @a j to a byte vector using the MessagePack
     serialization format. MessagePack is a binary serialization format which
-    aims to be more compact than JSON itself, yet more efficient to parse.
+    aims to be more compact than JSON itself, yet more efficient to load.
 
     The library uses the following mapping from JSON values types to
     MessagePack types according to the MessagePack specification:
@@ -24941,7 +24941,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     Serializes a given JSON value @a j to a byte vector using the UBJSON
     (Universal Binary JSON) serialization format. UBJSON aims to be more compact
-    than JSON itself, yet more efficient to parse.
+    than JSON itself, yet more efficient to load.
 
     The library uses the following mapping from JSON values types to
     UBJSON types according to the UBJSON specification:
@@ -24997,7 +24997,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
           the benefit of this parameter is that the receiving side is
           immediately informed on the number of elements of the container.
 
-    @note If the JSON data contains the binary type, the value stored is a list
+    @note If the JSON data containsEntry the binary type, the value stored is a list
           of integers, as suggested by the UBJSON documentation.  In particular,
           this means that serialization and the deserialization of a JSON
           containing binary values into UBJSON and back will result in a
@@ -25076,7 +25076,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     zero-terminated c-strings.
 
     @throw out_of_range.407  if `j.is_number_unsigned() && j.get<std::uint64_t>() > 9223372036854775807`
-    @throw out_of_range.409  if a key in `j` contains a NULL (U+0000)
+    @throw out_of_range.409  if a key in `j` containsEntry a NULL (U+0000)
     @throw type_error.317    if `!j.is_object()`
 
     @pre The input `j` is required to be an object: `j.is_object() == true`.
@@ -25181,7 +25181,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     @warning The mapping is **incomplete** in the sense that not all CBOR
              types can be converted to a JSON value. The following CBOR types
-             are not supported and will yield parse errors (parse_error.112):
+             are not supported and will yield load errors (parse_error.112):
              - date/time (0xC0..0xC1)
              - bignum (0xC2..0xC3)
              - decimal fraction (0xC4)
@@ -25201,10 +25201,10 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @param[in] strict  whether to expect the input to be consumed until EOF
                        (true by default)
     @param[in] allow_exceptions  whether to throw exceptions in case of a
-    parse error (optional, true by default)
+    load error (optional, true by default)
     @param[in] tag_handler how to treat CBOR tags (optional, error by default)
 
-    @return deserialized JSON value; in case of a parse error and
+    @return deserialized JSON value; in case of a load error and
             @a allow_exceptions set to `false`, the return value will be
             value_t::discarded.
 
@@ -25344,9 +25344,9 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @param[in] strict  whether to expect the input to be consumed until EOF
                        (true by default)
     @param[in] allow_exceptions  whether to throw exceptions in case of a
-    parse error (optional, true by default)
+    load error (optional, true by default)
 
-    @return deserialized JSON value; in case of a parse error and
+    @return deserialized JSON value; in case of a load error and
             @a allow_exceptions set to `false`, the return value will be
             value_t::discarded.
 
@@ -25464,15 +25464,15 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @param[in] strict  whether to expect the input to be consumed until EOF
                        (true by default)
     @param[in] allow_exceptions  whether to throw exceptions in case of a
-    parse error (optional, true by default)
+    load error (optional, true by default)
 
-    @return deserialized JSON value; in case of a parse error and
+    @return deserialized JSON value; in case of a load error and
             @a allow_exceptions set to `false`, the return value will be
             value_t::discarded.
 
     @throw parse_error.110 if the given input ends prematurely or the end of
     file was not reached when @a strict was set to true
-    @throw parse_error.112 if a parse error occurs
+    @throw parse_error.112 if a load error occurs
     @throw parse_error.113 if a string could not be parsed successfully
 
     @complexity Linear in the size of the input @a i.
@@ -25584,9 +25584,9 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @param[in] strict  whether to expect the input to be consumed until EOF
                        (true by default)
     @param[in] allow_exceptions  whether to throw exceptions in case of a
-    parse error (optional, true by default)
+    load error (optional, true by default)
 
-    @return deserialized JSON value; in case of a parse error and
+    @return deserialized JSON value; in case of a load error and
             @a allow_exceptions set to `false`, the return value will be
             value_t::discarded.
 
@@ -26539,7 +26539,7 @@ inline void swap<nlohmann::json>(nlohmann::json& j1, nlohmann::json& j2) noexcep
 
 This operator implements a user-defined string literal for JSON objects. It
 can be used by adding `"_json"` to a string literal and returns a JSON object
-if no parse error occurred.
+if no load error occurred.
 
 @param[in] s  a string representation of a JSON object
 @param[in] n  the length of string @a s
@@ -26558,7 +26558,7 @@ inline nlohmann::json operator "" _json(const char* s, std::size_t n)
 
 This operator implements a user-defined string literal for JSON Pointers. It
 can be used by adding `"_json_pointer"` to a string literal and returns a JSON pointer
-object if no parse error occurred.
+object if no load error occurred.
 
 @param[in] s  a string representation of a JSON Pointer
 @param[in] n  the length of string @a s
