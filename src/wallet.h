@@ -47,7 +47,7 @@ public:
   }
 
   void load(const std::string& filePath);
-  bool save(const std::string& filePath);
+  bool save(const std::string& filePath) const;
 
   nlohmann::json json() const;
   std::string str() const;

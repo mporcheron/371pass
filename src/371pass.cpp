@@ -74,10 +74,13 @@ int Pass::run(int argc, char *argv[]) {
         break;
 
       case Action::UPDATE:
-        throw std::runtime_error("update not implemented");
-//        if (!performUpdate(wObj, args)) {
-//          throw std::runtime_error("update failed due to unknown error");
-//        }
+//        throw std::runtime_error("update not implemented");
+        if (!performUpdate(wObj, args)) {
+          throw std::runtime_error("update failed due to unknown error");
+        }
+        if (!wObj.save(db)) {
+          throw std::runtime_error("save to disk failed due to unknown error");
+        }
         break;
 
       case Action::DELETE:
@@ -244,7 +247,7 @@ bool Pass::performCreate(Wallet& wObj, cxxopts::ParseResult& args) {
 
         try {
           key = e.substr(0, e.find(','));
-          value = e.substr(e.find(','));
+          value = e.substr(e.find(',')+1);
         } catch (const std::out_of_range& ex) { /* do nothing */ }
 
         iObj.addEntry(key, value);
@@ -280,6 +283,119 @@ bool Pass::performRead(Wallet& wObj, cxxopts::ParseResult& args) noexcept {
   }
 
   return true;
+}
+
+// if updating category ident:
+//  --action update --category oldident:newident
+// if updating item ident:
+//  --action update --category ident --item oldident:newident
+// if updating entry ident:
+//  --action update --category ident --item ident --entry oldident:newident
+// if updating entry value:
+//  --action update --category ident --item ident --entry ident,newvalue
+//
+// You can update more than one thing at the same time
+//
+// Throws std::out_of_range for unknown values
+bool Pass::performUpdate(Wallet& wObj, cxxopts::ParseResult& args) {
+  if (args.count("category")) {
+    std::string old_, new_;
+
+    // update category ident?
+    std::string c = args["category"].as<std::string>();
+    auto cPos = c.find(':');
+    if (cPos != std::string::npos) {
+      try {
+        old_ = c.substr(0, cPos);
+        new_ = c.substr(cPos + 1);
+      } catch (const std::out_of_range &ex) {
+        throw std::runtime_error("could not extract new category ident");
+      }
+
+      try {
+        Category &cObj = wObj.getCategory(old_);
+        cObj.setIdent(new_);
+        if (!wObj.addCategory(cObj) || !wObj.deleteCategory(old_)) {
+          return false;
+        }
+        c = new_;
+      } catch(const std::out_of_range& ex) {
+        throw std::out_of_range("unknown category");
+      }
+    } else if (!wObj.containsCategory(c)) {
+      throw std::out_of_range("unknown category");
+    }
+
+    Category& cObj = wObj.getCategory(c);
+
+    // update item ident?
+    std::string i = args["item"].as<std::string>();
+    auto iPos = i.find(':');
+    if (iPos != std::string::npos) {
+      try {
+        old_ = i.substr(0, iPos);
+        new_ = i.substr(iPos + 1);
+      } catch (const std::out_of_range &ex) {
+        throw std::runtime_error("could not extract new item ident");
+      }
+
+      Item& iObj = cObj.getItem(old_);
+      iObj.setIdent(new_);
+      if (!cObj.addItem(iObj) || !cObj.deleteItem(old_)) {
+        return false;
+      }
+      i = new_;
+    } else if (!cObj.containsItem(i)) {
+      throw std::out_of_range("unknown item");
+    }
+
+    Item& iObj = cObj.getItem(i);
+
+    // update entry value or ident?
+    std::string e = args["entry"].as<std::string>();
+    std::string ev = e;
+    auto ePos = e.find(':');
+    auto evPos = e.find(',');
+
+    if (ePos != std::string::npos) {
+      // change key (or key and value)
+      try {
+        std::string newkey_, val_;
+        if (evPos != std::string::npos) {
+          old_ = e.substr(0, ePos);
+          newkey_ = e.substr(ePos+1, evPos-ePos-1);
+          val_ = e.substr(evPos + 1);
+        } else {
+          old_ = e.substr(0, ePos);
+          val_ = e.substr(ePos + 1);
+        }
+
+        if (!iObj.addEntry(newkey_, val_) || !iObj.deleteEntry(old_)) {
+          return false;
+        }
+
+      } catch (const std::out_of_range &ex) {
+        throw std::runtime_error("could not extract new entry data");
+      }
+    } else if (evPos != std::string::npos) {
+      // change value only
+      try {
+        std::string key_ = e.substr(0, evPos);
+        new_ = e.substr(evPos + 1);
+
+        if (!iObj.addEntry(key_, new_)) {
+          return false;
+        }
+
+      } catch (const std::out_of_range &ex) {
+        throw std::runtime_error("could not extract new entry value");
+      }
+    }
+
+    return true;
+  }
+
+  throw std::runtime_error("must provide a category, item or entry to update");
 }
 
 // If there is a category, item, and entry key, delete just the entry

@@ -62,7 +62,7 @@ bool Wallet::addCategory(Category category) {
     return success;
   }
 
-  Category &existingCategory = result->second;
+  Category& existingCategory = result->second;
   for (auto item = category.begin(); item != category.end(); item++) {
     existingCategory.addItem(item->second);
   }
@@ -142,7 +142,7 @@ void Wallet::load(const std::string& filePath) {
   // Open the file
   try {
     fileStream.open(filePath, std::ifstream::in);
-  } catch (const std::runtime_error &ex) {
+  } catch (const std::runtime_error& ex) {
     throw std::runtime_error("Failed to open file for reading: " + filePath);
   }
 
@@ -175,13 +175,13 @@ void Wallet::load(const std::string& filePath) {
   }
 }
 
-bool Wallet::save(const std::string& filePath) {
+bool Wallet::save(const std::string& filePath) const {
   std::ofstream fileStream;
 
   // Open the file
   try {
     fileStream.open(filePath, std::ifstream::out);
-  } catch (const std::runtime_error &ex) {
+  } catch (const std::runtime_error& ex) {
     throw std::runtime_error("Failed to open file for writing: " + filePath);
   }
 

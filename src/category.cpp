@@ -19,6 +19,9 @@ Category::Category(std::string ident) : ident(ident), items() { }
 // TODO Write a function, getIdent, that returns the identifier for the
 //  Category.
 
+// TODO Write a function, setIdent, that takes one parameter, a string for a new
+//  Category identifier, and updates the member variable. It returns nothing.
+
 // TODO Write a function, newItem, that takes one parameter, an item identifier,
 //  and returns the Item object as a reference. If an object with the same
 //  identifier already exists, then the existing object should be returned.

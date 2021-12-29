@@ -20,6 +20,9 @@ Item::Item(std::string ident) : ident(ident), entries() { /* do nothing */ }
 
 // TODO Write a function, getIdent, that returns the identifier for the Item.
 
+// TODO Write a function, setIdent, that takes one parameter, a string for a new
+//  Item identifier, and updates the member variable. It returns nothing.
+
 // TODO Write a function, addEntry, that takes two parameters, an entry
 //  identifier and value and returns true if the entry was inserted into the
 //  container or false otherwise.

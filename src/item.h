@@ -37,6 +37,10 @@ public:
     return ident;
   }
 
+  inline void setIdent(std::string ident) {
+    this->ident = ident;
+  }
+
   unsigned int inline size() const noexcept {
     return entries.size();
   }
