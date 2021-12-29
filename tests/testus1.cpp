@@ -10,8 +10,8 @@
 // Catch2 — https://github.com/catchorg/Catch2
 // Catch2 is licensed under the BOOST license
 // -----------------------------------------------------
-// This file contains tests for the action program
-// argument.
+// This file contains tests case insensitivity for the
+// action program argument.
 // -----------------------------------------------------
 
 #include "../src/lib_catch.hpp"
@@ -23,7 +23,7 @@
 
 #include "../src/371pass.h"
 
-SCENARIO( "the action program argument can be parsed correctly", "[args][action]" ) {
+SCENARIO( "the action program argument can be parsed case insensitively correctly", "[extended][args][action]" ) {
 
   GIVEN( "a --action program argument and value" ) {
 
@@ -47,9 +47,9 @@ SCENARIO( "the action program argument can be parsed correctly", "[args][action]
 
     } // WHEN
 
-    WHEN( "the value is a create ('create') and Action::CREATE is returned" ) {
+    WHEN( "the value is a create ('CrEaTe') and Action::CREATE is returned" ) {
 
-      Argv argv({"test", "--action", "create"});
+      Argv argv({"test", "--action", "CrEaTe"});
       auto** actual_argv = argv.argv();
       auto argc          = argv.argc();
 
@@ -70,9 +70,9 @@ SCENARIO( "the action program argument can be parsed correctly", "[args][action]
 
     } // WHEN
 
-    WHEN( "the value is a create ('read') and Action::READ is returned" ) {
+    WHEN( "the value is a create ('READ') and Action::READ is returned" ) {
 
-      Argv argv({"test", "--action", "read"});
+      Argv argv({"test", "--action", "READ"});
       auto** actual_argv = argv.argv();
       auto argc          = argv.argc();
 
@@ -93,9 +93,9 @@ SCENARIO( "the action program argument can be parsed correctly", "[args][action]
 
     } // WHEN
 
-    WHEN( "the value is a create ('update') and Action::UPDATE is returned" ) {
+    WHEN( "the value is a create ('UPDate') and Action::UPDATE is returned" ) {
 
-      Argv argv({"test", "--action", "update"});
+      Argv argv({"test", "--action", "UPDate"});
       auto** actual_argv = argv.argv();
       auto argc          = argv.argc();
 

@@ -16,7 +16,7 @@
 #include "lib_cxxopts.hpp"
 #include "wallet.h"
 
-namespace Pass {
+namespace App {
 
   // TODO: Enter your student number here!
   const std::string STUDENT_NUMBER = "987654";
@@ -32,22 +32,22 @@ namespace Pass {
 
   cxxopts::Options cxxoptsSetup();
 
-  Pass::Action parseActionArgument(cxxopts::ParseResult& args);
+  App::Action parseActionArgument(cxxopts::ParseResult& args);
 
   bool performCreate(Wallet& wObj, cxxopts::ParseResult& args);
   bool performRead(Wallet& wObj, cxxopts::ParseResult& args) noexcept;
   bool performUpdate(Wallet& w, cxxopts::ParseResult& args);
   bool performDelete(Wallet& w, cxxopts::ParseResult& args);
 
-  const std::string getJSON(Wallet& w);
-  const std::string getJSON(Wallet& w,
-                            const std::string& c);
-  const std::string getJSON(Wallet& w,
-                            const std::string& c,
-                            const std::string& i);
-  const std::string getJSON(Wallet& wObj,
-                            const std::string& c,
-                            const std::string& i,
-                            const std::string& e);
+  std::string getJSON(Wallet& w);
+  std::string getJSON(Wallet& w,
+                      const std::string& c);
+  std::string getJSON(Wallet& w,
+                      const std::string& c,
+                      const std::string& i);
+  std::string getJSON(Wallet& wObj,
+                      const std::string& c,
+                      const std::string& i,
+                      const std::string& e);
 
-}; // namespace Pass
+}; // namespace App

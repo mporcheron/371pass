@@ -11,5 +11,5 @@
 #include "371pass.h"
 
 int main(int argc, char *argv[]) {
-  return Pass::run(argc, argv);
+  return App::run(argc, argv);
 }

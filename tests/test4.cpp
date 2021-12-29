@@ -7,7 +7,7 @@
 //
 // Canvas: https://canvas.swansea.ac.uk/courses/15581
 // -----------------------------------------------------
-// Catch2 test script — https://github.com/catchorg/Catch2
+// Catch2 — https://github.com/catchorg/Catch2
 // Catch2 is licensed under the BOOST license
 // -----------------------------------------------------
 // This file contains tests for the Category container

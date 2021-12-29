@@ -19,24 +19,21 @@
 
 // TODO Complete this function. You have been provided some skeleton code which
 //  retrieves the database file name from cxxopts.
-//  1. Construct a DBFile object, open the file, retrieve the JSON text as a
-//     string. If you have an issue opening or reading the file, it should be
-//     be replaced. This is usually a **very bad idea** in normal application
-//     development (as the user could lose data) but to keep things simple for
-//     this coursework, we will do this.
-//  2. Construct a Wallet object. If you were able to extract JSON data, pass
-//     this to the Wallet constructor, otherwise construct an empty Wallet.
-//  3. Take the appropriate action based on the program arguments (see the
-//     coursework specification for details).
-//  4. Save the updated Wallet object to the JSON file
+//  1. Load the database file by calling load() on a Wallet object
+//  2. Parse the 'action' argument to decide what action should be taken (
+//     create, read, update, or delete). Read is the easiest to implement, and
+//     update is the hardest. The details of how these arguments work is in the
+//     coursework specification.
+//  4. Save the updated Wallet object to the JSON file if there have been
+//     changes (calling save() on the Wallet object).
 //
 // Some commented out code has been provided. Using some of this will be
 // demonstrated in the coursework video on Canvas. Remember, this coursework is
 // meant to be challenging and testing your understanding of programming in C++.
 // Part of the challenge is figuring things out on your own. That is a major
-// part of the software development.
-int Pass::run(int argc, char *argv[]) {
-  auto options = Pass::cxxoptsSetup();
+// part of software development.
+int App::run(int argc, char *argv[]) {
+  auto options = App::cxxoptsSetup();
   try {
     auto args = options.parse(argc, argv);
 
@@ -68,6 +65,7 @@ int Pass::run(int argc, char *argv[]) {
         break;
 
       case Action::READ:
+//        throw std::runtime_error("read not implemented");
         if (!performRead(wObj, args)) {
           throw std::runtime_error("read failed due to unknown error");
         }
@@ -95,24 +93,23 @@ int Pass::run(int argc, char *argv[]) {
 
       default:
         throw std::runtime_error("Unknown action not implemented");
-        break;
     }
 
   } catch (const cxxopts::missing_argument_exception& ex) {
-    std::cerr << "You have missing value for the " << ex.what() << " argument."
-                                                                   "\n\n";
+    std::cerr << "Error: the " << ex.what() << " argument must be provided."
+                                                                      "\n\n";
     std::cerr << options.help() << '\n';
     return 1;
   } catch (const std::invalid_argument& ex) {
-    std::cerr << "The " << ex.what() << " argument is invalid.\n\n";
+    std::cerr << "Error: the " << ex.what() << " argument is invalid.\n\n";
     std::cerr << options.help() << '\n';
     return 1;
   } catch (const std::exception& ex) {
-    std::cerr << "Unexpected exception: " << ex.what() << "\n\n";
+    std::cerr << "Unexpected error: " << ex.what() << "\n\n";
     std::cerr << options.help() << '\n';
     return 2;
   } catch (...) {
-    std::cerr << "Unknown error\n";
+    std::cerr << "Unknown error!\n";
     return 1;
   }
 
@@ -120,7 +117,7 @@ int Pass::run(int argc, char *argv[]) {
 }
 
 // Create a cxxopts instance
-cxxopts::Options Pass::cxxoptsSetup() {
+cxxopts::Options App::cxxoptsSetup() {
   cxxopts::Options cxxopts(
       "371pass",
       "Student ID: " + STUDENT_NUMBER + "\n");
@@ -152,7 +149,8 @@ cxxopts::Options Pass::cxxoptsSetup() {
       "identifier, the item argument to your chosen item identifier, and the "
       "entry argument to the string 'key,value'). If there is no comma, an "
       "empty entry is inserted. If you are simply retrieving an entry, set the "
-      "entry argument to the 'key'.",
+      "entry argument to the 'key'. If you are updating an entry key, use a : "
+      "e.g., oldkey:newkey,newvalue.",
       cxxopts::value<std::string>())(
 
       "h,help",
@@ -165,11 +163,11 @@ cxxopts::Options Pass::cxxoptsSetup() {
 //  case-insensitive way (e.g., an argument value of 'CREATE' would still work).
 //  If an invalid value is given in a string, throw an std::invalid_argument
 //  exception.
-Pass::Action Pass::parseActionArgument(cxxopts::ParseResult& args) {
+App::Action App::parseActionArgument(cxxopts::ParseResult& args) {
   try {
   std::string input = args["action"].as<std::string>();
 
-  // TODO map remove this line
+  // TODO map remove this line (write a version of it in the video!)
   std::transform(input.begin(), input.end(), input.begin(),
                  [](unsigned char c) { return std::tolower(c); });
 
@@ -180,6 +178,8 @@ Pass::Action Pass::parseActionArgument(cxxopts::ParseResult& args) {
       {"delete", Action::DELETE}};
 
     return mapping.at(input);
+
+    // TODO map: use this in the framework: return Action::READ;
   } catch(const cxxopts::option_has_no_value_exception& ex) {
     throw std::invalid_argument("action");
   } catch (const std::out_of_range& ex) {
@@ -187,50 +187,62 @@ Pass::Action Pass::parseActionArgument(cxxopts::ParseResult& args) {
   }
 }
 
-// TODO Write a function, getJSON, that retrieves, as a std::string, the JSON
-//  representation for a Wallet.
+// TODO Write a function, getJSON, that returns a std::string containing the
+//  JSON representation of a Wallet object.
 //
 // This function has been implemented for you, but you may wish to adjust it.
-const std::string Pass::getJSON(Wallet& wObj) {
+// You will have to uncomment the code, which has been left commented to ensure
+// the coursework framework compiles (i.e., it calls functions that you must
+// implement, once you have implemented them you may uncomment this function).
+std::string App::getJSON(Wallet& wObj) {
   return wObj.str();
 }
 
-// TODO Write a function, getJSON, that retrieves, as a std::string, the JSON
-//  representation for a specific Category in a Wallet.
+// TODO Write a function, getJSON, that returns a std::string containing the
+//  JSON representation of a specific Category in a Wallet object.
 //
 // This function has been implemented for you, but you may wish to adjust it.
-const std::string Pass::getJSON(Wallet& wObj,
-                                const std::string& c) {
+// You will have to uncomment the code, which has been left commented to ensure
+// the coursework framework compiles (i.e., it calls functions that you must
+// implement, once you have implemented them you may uncomment this function).
+std::string App::getJSON(Wallet& wObj,
+                         const std::string& c) {
   auto cObj = wObj.getCategory(c);
   return cObj.str();
 }
 
-// TODO Write a function, getJSON, that retrieves, as a std::string, the JSON
-//  representation for a specific Item in a Wallet.
+// TODO Write a function, getJSON, that returns a std::string containing the
+//  JSON representation of a specific Item in a Wallet object.
 //
 // This function has been implemented for you, but you may wish to adjust it.
-const std::string Pass::getJSON(Wallet& wObj,
-                                const std::string& c,
-                                const std::string& i) {
+// You will have to uncomment the code, which has been left commented to ensure
+// the coursework framework compiles (i.e., it calls functions that you must
+// implement, once you have implemented them you may uncomment this function).
+std::string App::getJSON(Wallet& wObj,
+                         const std::string& c,
+                         const std::string& i) {
   auto cObj = wObj.getCategory(c);
   const auto iObj = cObj.getItem(i);
   return iObj.str();
 }
 
-// TODO Write a function, getJSON, that retrieves, as a std::string, the JSON
-//  representation for a specific entry in a Wallet.
+// TODO Write a function, getJSON, that returns a std::string containing the
+//  JSON representation of a specific Entry in a Wallet object.
 //
 // This function has been implemented for you, but you may wish to adjust it.
-const std::string Pass::getJSON(Wallet& wObj,
-                                const std::string& c,
-                                const std::string& i,
-                                const std::string& e) {
+// You will have to uncomment the code, which has been left commented to ensure
+// the coursework framework compiles (i.e., it calls functions that you must
+// implement, once you have implemented them you may uncomment this function).
+std::string App::getJSON(Wallet& wObj,
+                         const std::string& c,
+                         const std::string& i,
+                         const std::string& e) {
   auto cObj = wObj.getCategory(c);
   auto iObj = cObj.getItem(i);
   return iObj.getEntry(e);
 }
 
-bool Pass::performCreate(Wallet& wObj, cxxopts::ParseResult& args) {
+bool App::performCreate(Wallet& wObj, cxxopts::ParseResult& args) {
   if (args.count("category")) {
     const std::string c = args["category"].as<std::string>();
     Category& cObj = wObj.newCategory(c);
@@ -261,7 +273,7 @@ bool Pass::performCreate(Wallet& wObj, cxxopts::ParseResult& args) {
   throw std::runtime_error("must provide a category, item or entry to create");
 }
 
-bool Pass::performRead(Wallet& wObj, cxxopts::ParseResult& args) noexcept {
+bool App::performRead(Wallet& wObj, cxxopts::ParseResult& args) noexcept {
   if (args.count("category")) {
     const std::string c = args["category"].as<std::string>();
 
@@ -297,7 +309,7 @@ bool Pass::performRead(Wallet& wObj, cxxopts::ParseResult& args) noexcept {
 // You can update more than one thing at the same time
 //
 // Throws std::out_of_range for unknown values
-bool Pass::performUpdate(Wallet& wObj, cxxopts::ParseResult& args) {
+bool App::performUpdate(Wallet& wObj, cxxopts::ParseResult& args) {
   if (args.count("category")) {
     std::string old_, new_;
 
@@ -353,7 +365,6 @@ bool Pass::performUpdate(Wallet& wObj, cxxopts::ParseResult& args) {
 
     // update entry value or ident?
     std::string e = args["entry"].as<std::string>();
-    std::string ev = e;
     auto ePos = e.find(':');
     auto evPos = e.find(',');
 
@@ -406,7 +417,7 @@ bool Pass::performUpdate(Wallet& wObj, cxxopts::ParseResult& args) {
 //  'category'
 // If a non-existant category, item, or entry key is supplied, throw a
 //   std::invalid_argument with the message of the problematic argument
-bool Pass::performDelete(Wallet& wObj, cxxopts::ParseResult& args) {
+bool App::performDelete(Wallet& wObj, cxxopts::ParseResult& args) {
   if (args.count("category")) {
     const std::string c = args["category"].as<std::string>();
 
