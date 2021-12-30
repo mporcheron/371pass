@@ -23,79 +23,20 @@
 
 #include "../src/category.h"
 
-SCENARIO( "an empty Category can be constructed successfully", "[category]" ) {
-
-  GIVEN( "the category identifier 'Test'" ) {
-
-    WHEN( "the Category object will contain zero items" ) {
-
-      Category c { "Test" };
-
-      REQUIRE( c.size() == 0 );
-      REQUIRE( c.empty() );
-
-    } // WHEN
-
-  } // GIVEN
-
-} // SCENARIO
-
-SCENARIO( "Items can be added to and retrieved from a Category", "[category]" ) {
+SCENARIO("An empty Category can be constructed successfully", "[category]") {
 
   const std::string ident = "Test";
 
-  GIVEN( "a Category object with identifier '" + ident + "'" ) {
+  GIVEN("the category identifier '" + ident + "'") {
 
-    Category c { ident };
+    WHEN("a new Category object is constructed") {
 
-    WHEN( "an Item with identifier '" + ident + "' can be added" ) {
+      Category c{ident};
 
-      Item i { ident };
+      THEN("it will contain zero Items/be empty") {
 
-      REQUIRE( c.addItem(i) == true );
-
-      THEN( "the Category contains 1 Item" ) {
-
-        REQUIRE( c.size() == 1 );
-        REQUIRE_FALSE( c.empty() );
-
-      } // THEN
-
-      THEN( "the Item can be retrieved by the ident '" + ident + "'" ) {
-
-        REQUIRE( c.getItem(ident) == i );
-
-      } // THEN
-
-      Item i2 { ident };
-
-      THEN( "a second Item with the same ident, '" + ident + "', will not change the overall size of the Category" ) {
-
-        REQUIRE( c.addItem(i2) == true );
-        REQUIRE( c.size() == 1 );
-        REQUIRE_FALSE( c.empty() );
-
-      } // THEN
-
-      const std::string ident3 = "Test2";
-      Item i3 { ident3 };
-
-      THEN( "a third Item with a different ident, '" + ident3 + "', can be added" ) {
-
-        REQUIRE( c.addItem(i3) == true );
-
-        THEN( "the Category contains 2 Items" ) {
-
-          REQUIRE( c.size() == 2 );
-          REQUIRE_FALSE( c.empty() );
-
-        } // THEN
-
-        THEN( "the Item can be retrieved by the ident '" + ident3 + "'" ) {
-
-          REQUIRE( c.getItem(ident3) == i3 );
-
-        } // THEN
+        REQUIRE(c.size() == 0);
+        REQUIRE(c.empty());
 
       } // THEN
 
@@ -105,50 +46,161 @@ SCENARIO( "Items can be added to and retrieved from a Category", "[category]" ) 
 
 } // SCENARIO
 
-SCENARIO( "Items can be added to and deleted from a Category", "[category]" ) {
+SCENARIO("Items can be added to and retrieved from a Category", "[category]") {
 
   const std::string ident = "Test";
 
-  GIVEN( "a Category object with identifier '" + ident + "'" ) {
+  GIVEN("a Category object with identifier '" + ident + "'") {
 
-    Category c { ident };
+    Category c{ident};
 
-    WHEN( "an Item with identifier '" + ident + "' can be added" ) {
+    AND_GIVEN("an Item with identifier '" + ident + "'") {
 
-      Item i { ident };
+      Item i{ident};
 
-      REQUIRE( c.addItem(i) == true );
+      WHEN("adding the Item") {
 
-      THEN( "the Category contains 1 Item" ) {
+        THEN("true is returned") {
 
-        REQUIRE( c.size() == 1 );
-        REQUIRE_FALSE( c.empty() );
+          REQUIRE(c.addItem(i) == true);
 
-      } // THEN
+          AND_THEN("the Category contains 1 Item") {
 
-      THEN( "the Item can be retrieved by the ident '" + ident + "'" ) {
+            REQUIRE(c.size() == 1);
+            REQUIRE_FALSE(c.empty());
 
-        REQUIRE( c.getItem(ident) == i );
+            AND_THEN("getting the Item using the ident '" + ident +
+                     "' will return the expected object") {
 
-      } // THEN
+              REQUIRE(c.getItem(ident) == i);
+              REQUIRE_FALSE(c.empty());
 
-      THEN( "deleting a non-existent Item ('blah') will not change the Category" ) {
+            } // AND_THEN
 
-        REQUIRE_FALSE( c.deleteItem("blah") );
-        REQUIRE( c.getItem(ident) == i );
-        REQUIRE( c.size() == 1 );
+          } // AND_THEN
 
-      } // THEN
+          AND_GIVEN("another Item with the same ident, '" + ident + "'") {
 
-      THEN( "deleting the existent Item ('" + ident + "') will leave the Category empty" ) {
+            Item i2{ident};
 
-        REQUIRE( c.deleteItem(ident) );
-        REQUIRE_THROWS_AS( c.getItem(ident), std::out_of_range );
-        REQUIRE( c.size() == 0 );
+            WHEN("adding the Item") {
 
-      } // THEN
+              THEN("false is returned and the size of the Category will not "
+                   "change") {
 
-    } // WHEN
+                REQUIRE(c.addItem(i2) == false);
+                REQUIRE(c.size() == 1);
+                REQUIRE_FALSE(c.empty());
+
+              } // THEN
+
+            } // WHEN
+
+          } // AND_GIVEN
+
+          const std::string ident3 = "Test2";
+
+          AND_GIVEN("another Item with the a different ident, '" + ident3 +
+                    "'") {
+
+            Item i3{ident3};
+
+            WHEN("adding the Item") {
+
+              THEN("true is returned and the size of the Category will be 2") {
+
+                REQUIRE(c.addItem(i3) == true);
+                REQUIRE(c.size() == 2);
+                REQUIRE_FALSE(c.empty());
+
+                AND_THEN("getting the Item using the ident '" + ident3 +
+                         "' will return the expected object") {
+
+                  REQUIRE(c.getItem(ident3) == i3);
+
+                } // AND_THEN
+
+              } // THEN
+
+            } // WHEN
+
+          } // AND_GIVEN
+
+        } // THEN
+
+      } // WHEN
+
+    } // AND_GIVEN
+
+  } // GIVEN
+
+} // SCENARIO
+
+SCENARIO("Items can be added to and deleted from a Category", "[category]") {
+
+  const std::string ident = "Test";
+
+  GIVEN("a Category object with identifier '" + ident + "'") {
+
+    Category c{ident};
+
+    AND_GIVEN("an Item with identifier '" + ident + "") {
+
+      Item i{ident};
+
+      WHEN("the entry is added") {
+
+        THEN("true is returned") {
+
+          REQUIRE(c.addItem(i) == true);
+
+          AND_THEN("the Category contains 1 Item") {
+
+            REQUIRE(c.size() == 1);
+            REQUIRE_FALSE(c.empty());
+
+            WHEN("getting the Item using the ident '" + ident + "'") {
+
+              THEN("the Item object is returned") {
+
+                REQUIRE(c.getItem(ident) == i);
+
+              } // THEN
+
+            } // WHEN
+
+            WHEN("deleting a non-existent Item with ident 'blah'") {
+
+              THEN("an std::out_of_range exception is thrown and the Category "
+                   "will not change") {
+
+                REQUIRE_THROWS_AS(c.deleteItem("blah"), std::out_of_range);
+                REQUIRE(c.getItem(ident) == i);
+                REQUIRE(c.size() == 1);
+
+              } // THEN
+
+            } // WHEN
+
+            WHEN("deleting the added Item with ident '" + ident) {
+
+              THEN("true is returned and the Category will be empty") {
+
+                REQUIRE(c.deleteItem(ident) == true);
+                REQUIRE_THROWS_AS(c.getItem(ident), std::out_of_range);
+                REQUIRE(c.size() == 0);
+
+              } // THEN
+
+            } // WHEN
+
+          } // AND_THEN
+
+        } // THEN
+
+      } // WHEN
+
+    } // AND_GIVEN
 
   } // GIVEN
 

@@ -23,76 +23,20 @@
 
 #include "../src/item.h"
 
-SCENARIO( "an empty Item can be constructed successfully", "[item]" ) {
+SCENARIO("An empty Item can be constructed successfully", "[item]") {
 
-  GIVEN( "the item identifier 'Test'" ) {
+  const std::string ident = "Test";
 
-    WHEN( "the Item object will contain zero entries" ) {
+  GIVEN("the item identifier '" + ident + "'") {
 
-      Item i { "Test" };
+    WHEN("a new Item object is constructed") {
 
-      REQUIRE( i.size() == 0 );
-      REQUIRE( i.empty() );
+      Item i{ident};
 
-    } // WHEN
+      THEN("it will contain zero entries/be empty") {
 
-  } // GIVEN
-
-} // SCENARIO
-
-SCENARIO( "Entries can be added to and retrieved from an Item", "[item]" ) {
-
-  GIVEN( "an Item object with identifier 'Test'" ) {
-
-    Item i { "Test" };
-
-    std::string key = "url";
-    std::string value = "https://www.google.com/";
-
-    WHEN( "an entry with key '" + key + "' and value '" + value + "' can be added" ) {
-
-      REQUIRE( i.addEntry(key, value) == true );
-
-      THEN( "the Item contains 1 entry" ) {
-
-        REQUIRE( i.size() == 1 );
-        REQUIRE_FALSE( i.empty() );
-
-      } // THEN
-
-      THEN( "the entry can be retrieved by the key '" + key + "'" ) {
-
-        REQUIRE( i.getEntry(key) == value );
-
-      } // THEN
-
-      THEN( "a second entry with the same key, '" + key + "', will not change the overall size of the Item" ) {
-
-        REQUIRE( i.addEntry(key, value) == true );
-        REQUIRE( i.size() == 1 );
-        REQUIRE_FALSE( i.empty() );
-
-      } // THEN
-
-      key = "username";
-      value = "myusername";
-
-      THEN( "a third entry with a different key, '" + key + "', and value '" + value + "' can be added" ) {
-
-        REQUIRE( i.addEntry(key, value) == true );
-
-        THEN( "the Item contains 2 entries" ) {
-
-          REQUIRE( i.size() == 2 );
-          REQUIRE_FALSE( i.empty() );
-
-        } // THEN
-
-        THEN( "the entry can be retrieved by the key '" + key + "'" ) {
-
-          REQUIRE( i.getEntry(key) == value );
-
-        } // THEN
+        REQUIRE(i.size() == 0);
+        REQUIRE(i.empty());
 
       } // THEN
 
@@ -102,49 +46,158 @@ SCENARIO( "Entries can be added to and retrieved from an Item", "[item]" ) {
 
 } // SCENARIO
 
-SCENARIO( "Entries can be added to and deleted from an Item", "[item]" ) {
+SCENARIO("Entries can be added to and retrieved from an Item", "[item]") {
 
-  GIVEN( "an Item object with identifier 'Test'" ) {
+  const std::string ident = "Test";
 
-    Item i { "Test" };
+  GIVEN("an Item object with identifier '" + ident + "'") {
+
+    Item i{ident};
 
     std::string key = "url";
     std::string value = "https://www.google.com/";
 
-    WHEN( "an entry with key '" + key + "' and value '" + value + "' can be added" ) {
+    AND_GIVEN("an entry with key '" + key + "' and value '" + value + "'") {
 
-      REQUIRE( i.addEntry(key, value) == true );
+      WHEN("the entry is added") {
 
-      THEN( "the Item contains 1 entry" ) {
+        THEN("true is returned") {
 
-        REQUIRE( i.size() == 1 );
-        REQUIRE_FALSE( i.empty() );
+          REQUIRE(i.addEntry(key, value) == true);
 
-      } // THEN
+          AND_THEN("the Item contains 1 entry") {
 
-      THEN( "the entry can be retrieved by the key '" + key + "'" ) {
+            REQUIRE(i.size() == 1);
+            REQUIRE_FALSE(i.empty());
 
-        REQUIRE( i.getEntry(key) == value );
+            AND_THEN("getting the entry using the key '" + key +
+                     "' will return the expected value") {
 
-      } // THEN
+              REQUIRE(i.getEntry(key) == value);
 
-      THEN( "deleting a non-existent entry ('blah') will not change the Item" ) {
+            } // AND_THEN
 
-        REQUIRE_FALSE( i.deleteEntry("blah") );
-        REQUIRE( i.getEntry(key) == value );
-        REQUIRE( i.size() == 1 );
+          } // AND_THEN
 
-      } // THEN
+          AND_GIVEN("another entry with the same key, '" + key + "'") {
 
-      THEN( "deleting the existent entry ('" + key + "') will leave the Item empty" ) {
+            WHEN("adding the entry") {
 
-        REQUIRE( i.deleteEntry(key) );
-        REQUIRE_THROWS_AS( i.getEntry(key), std::out_of_range );
-        REQUIRE( i.size() == 0 );
+              THEN("false is returned and the size of the Item will not "
+                   "change") {
 
-      } // THEN
+                REQUIRE_FALSE(i.addEntry(key, value));
+                REQUIRE(i.size() == 1);
+                REQUIRE_FALSE(i.empty());
 
-    } // WHEN
+              } // THEN
+
+            } // WHEN
+
+          } // AND_GIVEN
+
+          key = "username";
+          value = "myusername";
+
+          AND_GIVEN("another entry with a different key, '" + key +
+                    "', and value '" + value + "'") {
+
+            WHEN("adding the entry") {
+
+              THEN("true is returned and the size of the Item will be 2") {
+
+                REQUIRE(i.addEntry(key, value) == true);
+                REQUIRE(i.size() == 2);
+                REQUIRE_FALSE(i.empty());
+
+                AND_THEN("getting the entry using the key '" + key +
+                         "' will return the expected value") {
+
+                  REQUIRE(i.getEntry(key) == value);
+
+                } // AND_THEN
+
+              } // THEN
+
+            } // WHEN
+
+          } // AND_GIVEN
+
+        } // THEN
+
+      } // WHEN
+
+    } // AND_GIVEN
+
+  } // GIVEN
+
+} // SCENARIO
+
+SCENARIO("Entries can be added to and deleted from an Item", "[item]") {
+
+  const std::string ident = "Test";
+
+  GIVEN("an Item object with identifier '" + ident + "'") {
+
+    Item i{ident};
+
+    std::string key = "url";
+    std::string value = "https://www.google.com/";
+
+    AND_GIVEN("an entry with key '" + key + "' and value '" + value + "'") {
+
+      WHEN("the entry is added") {
+
+        THEN("true is returned") {
+
+          REQUIRE(i.addEntry(key, value) == true);
+
+          AND_THEN("the Item contains 1 entry") {
+
+            REQUIRE(i.size() == 1);
+            REQUIRE_FALSE(i.empty());
+
+            WHEN("getting the entry using the key '" + key + "'") {
+
+              THEN("the expected value will be returned") {
+
+                REQUIRE(i.getEntry(key) == value);
+
+              } // THEN
+
+            } // WHEN
+
+            WHEN("deleting a non-existent entry with key 'blah'") {
+
+              THEN("the Item will not change") {
+
+                REQUIRE_FALSE(i.deleteEntry("blah"));
+                REQUIRE(i.getEntry(key) == value);
+                REQUIRE(i.size() == 1);
+
+              } // THEN
+
+            } // WHEN
+
+            WHEN("deleting the added entry with key '" + key + "'") {
+
+              THEN("the Item will be empty") {
+
+                REQUIRE(i.deleteEntry(key));
+                REQUIRE_THROWS_AS(i.getEntry(key), std::out_of_range);
+                REQUIRE(i.size() == 0);
+
+              } // THEN
+
+            } // WHEN
+
+          } // AND_THEN
+
+        } // THEN
+
+      } // WHEN
+
+    } // AND_GIVEN
 
   } // GIVEN
 

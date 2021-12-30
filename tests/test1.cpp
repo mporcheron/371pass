@@ -23,11 +23,11 @@
 
 #include "../src/371pass.h"
 
-SCENARIO( "the action program argument can be parsed correctly", "[args]" ) {
+SCENARIO( "The action program argument can be parsed correctly", "[args]" ) {
 
   GIVEN( "a --action program argument and value" ) {
 
-    WHEN( "the value is invalid ('invalid')" ) {
+    WHEN( "the value of the action argument is not an expected action ('invalid')" ) {
 
       Argv argv({"test", "--action", "invalid"});
       auto** actual_argv = argv.argv();
@@ -47,7 +47,7 @@ SCENARIO( "the action program argument can be parsed correctly", "[args]" ) {
 
     } // WHEN
 
-    WHEN( "the value is a create ('create') and Action::CREATE is returned" ) {
+    WHEN( "the value of the program argument is 'create'" ) {
 
       Argv argv({"test", "--action", "create"});
       auto** actual_argv = argv.argv();
@@ -70,7 +70,7 @@ SCENARIO( "the action program argument can be parsed correctly", "[args]" ) {
 
     } // WHEN
 
-    WHEN( "the value is a create ('read') and Action::READ is returned" ) {
+    WHEN( "the value of the program argument is 'read'" ) {
 
       Argv argv({"test", "--action", "read"});
       auto** actual_argv = argv.argv();
@@ -93,7 +93,7 @@ SCENARIO( "the action program argument can be parsed correctly", "[args]" ) {
 
     } // WHEN
 
-    WHEN( "the value is a create ('update') and Action::UPDATE is returned" ) {
+    WHEN( "the value of the program argument is 'update'" ) {
 
       Argv argv({"test", "--action", "update"});
       auto** actual_argv = argv.argv();
@@ -116,7 +116,7 @@ SCENARIO( "the action program argument can be parsed correctly", "[args]" ) {
 
     } // WHEN
 
-    WHEN( "the value is a create ('delete') and Action::DELETE is returned" ) {
+    WHEN( "the value of the program argument is a 'delete'" ) {
 
       Argv argv({"test", "--action", "delete"});
       auto** actual_argv = argv.argv();

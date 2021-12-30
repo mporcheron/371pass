@@ -10,11 +10,11 @@
 
 #include <algorithm>
 #include <iostream>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
-#include "lib_cxxopts.hpp"
 #include "371pass.h"
+#include "lib_cxxopts.hpp"
 #include "wallet.h"
 
 // TODO Complete this function. You have been provided some skeleton code which
@@ -45,66 +45,67 @@ int App::run(int argc, char *argv[]) {
 
     // Open the database and construct the Wallet
     const std::string db = args["db"].as<std::string>();
-    Wallet wObj {};
+    Wallet wObj{};
     try {
       wObj.load(db);
-    } catch (const std::runtime_error& ex) {
+    } catch (const std::runtime_error &ex) {
       throw std::invalid_argument("db");
     }
 
     const Action a = parseActionArgument(args);
-    switch(a) {
-      case Action::CREATE:
-//        throw std::runtime_error("create not implemented");
-        if (!performCreate(wObj, args)) {
-          throw std::runtime_error("create failed due to unknown error");
-        }
-        if (!wObj.save(db)) {
-          throw std::runtime_error("save to disk failed due to unknown error");
-        }
-        break;
+    switch (a) {
+    case Action::CREATE:
+      //        throw std::runtime_error("create not implemented");
+      if (!performCreate(wObj, args)) {
+        throw std::runtime_error("create failed due to unknown error");
+      }
+      if (!wObj.save(db)) {
+        throw std::runtime_error("save to disk failed due to unknown error");
+      }
+      break;
 
-      case Action::READ:
-//        throw std::runtime_error("read not implemented");
-        if (!performRead(wObj, args)) {
-          throw std::runtime_error("read failed due to unknown error");
-        }
-        break;
+    case Action::READ:
+      //        throw std::runtime_error("read not implemented");
+      if (!performRead(wObj, args)) {
+        throw std::runtime_error("read failed due to unknown error");
+      }
+      break;
 
-      case Action::UPDATE:
-//        throw std::runtime_error("update not implemented");
-        if (!performUpdate(wObj, args)) {
-          throw std::runtime_error("update failed due to unknown error");
-        }
-        if (!wObj.save(db)) {
-          throw std::runtime_error("save to disk failed due to unknown error");
-        }
-        break;
+    case Action::UPDATE:
+      //        throw std::runtime_error("update not implemented");
+      if (!performUpdate(wObj, args)) {
+        throw std::runtime_error("update failed due to unknown error");
+      }
+      if (!wObj.save(db)) {
+        throw std::runtime_error("save to disk failed due to unknown error");
+      }
+      break;
 
-      case Action::DELETE:
-//        throw std::runtime_error("delete not implemented");
-        if (!performDelete(wObj, args)) {
-          throw std::runtime_error("delete failed due to unknown error");
-        }
-        if (!wObj.save(db)) {
-          throw std::runtime_error("save to disk failed due to unknown error");
-        }
-        break;
+    case Action::DELETE:
+      //        throw std::runtime_error("delete not implemented");
+      if (!performDelete(wObj, args)) {
+        throw std::runtime_error("delete failed due to unknown error");
+      }
+      if (!wObj.save(db)) {
+        throw std::runtime_error("save to disk failed due to unknown error");
+      }
+      break;
 
-      default:
-        throw std::runtime_error("Unknown action not implemented");
+    default:
+      throw std::runtime_error("Unknown action not implemented");
     }
 
-  } catch (const cxxopts::missing_argument_exception& ex) {
-    std::cerr << "Error: the " << ex.what() << " argument must be provided."
-                                                                      "\n\n";
+  } catch (const cxxopts::missing_argument_exception &ex) {
+    std::cerr << "Error: the " << ex.what()
+              << " argument must be provided."
+                 "\n\n";
     std::cerr << options.help() << '\n';
     return 1;
-  } catch (const std::invalid_argument& ex) {
+  } catch (const std::invalid_argument &ex) {
     std::cerr << "Error: the " << ex.what() << " argument is invalid.\n\n";
     std::cerr << options.help() << '\n';
     return 1;
-  } catch (const std::exception& ex) {
+  } catch (const std::exception &ex) {
     std::cerr << "Unexpected error: " << ex.what() << "\n\n";
     std::cerr << options.help() << '\n';
     return 2;
@@ -116,19 +117,15 @@ int App::run(int argc, char *argv[]) {
   return 0;
 }
 
-// Create a cxxopts instance
+// Create a cxxopts instance. You do not need to modify this function.
 cxxopts::Options App::cxxoptsSetup() {
-  cxxopts::Options cxxopts(
-      "371pass",
-      "Student ID: " + STUDENT_NUMBER + "\n");
+  cxxopts::Options cxxopts("371pass", "Student ID: " + STUDENT_NUMBER + "\n");
 
   cxxopts.add_options()(
-      "db",
-      "Filename of the 371pass database",
+      "db", "Filename of the 371pass database",
       cxxopts::value<std::string>()->default_value("database.json"))(
 
-      "action",
-      "Action to take, can be: 'create', 'read', 'update', 'delete'.",
+      "action", "Action to take, can be: 'create', 'read', 'update', 'delete'.",
       cxxopts::value<std::string>())(
 
       "category",
@@ -153,8 +150,7 @@ cxxopts::Options App::cxxoptsSetup() {
       "e.g., oldkey:newkey,newvalue.",
       cxxopts::value<std::string>())(
 
-      "h,help",
-      "Print usage.");
+      "h,help", "Print usage.");
 
   return cxxopts;
 }
@@ -163,26 +159,26 @@ cxxopts::Options App::cxxoptsSetup() {
 //  case-insensitive way (e.g., an argument value of 'CREATE' would still work).
 //  If an invalid value is given in a string, throw an std::invalid_argument
 //  exception.
-App::Action App::parseActionArgument(cxxopts::ParseResult& args) {
+App::Action App::parseActionArgument(cxxopts::ParseResult &args) {
   try {
-  std::string input = args["action"].as<std::string>();
+    std::string input = args["action"].as<std::string>();
 
-  // TODO map remove this line (write a version of it in the video!)
-  std::transform(input.begin(), input.end(), input.begin(),
-                 [](unsigned char c) { return std::tolower(c); });
+    // TODO map remove this line (write a version of it in the video!)
+    std::transform(input.begin(), input.end(), input.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
 
-  static std::unordered_map<std::string, Action> mapping = {
-      {"create", Action::CREATE},
-      {"read",   Action::READ},
-      {"update", Action::UPDATE},
-      {"delete", Action::DELETE}};
+    static std::unordered_map<std::string, Action> mapping = {
+        {"create", Action::CREATE},
+        {"read", Action::READ},
+        {"update", Action::UPDATE},
+        {"delete", Action::DELETE}};
 
     return mapping.at(input);
 
     // TODO map: use this in the framework: return Action::READ;
-  } catch(const cxxopts::option_has_no_value_exception& ex) {
+  } catch (const cxxopts::option_has_no_value_exception &ex) {
     throw std::invalid_argument("action");
-  } catch (const std::out_of_range& ex) {
+  } catch (const std::out_of_range &ex) {
     throw std::invalid_argument("action");
   }
 }
@@ -194,9 +190,7 @@ App::Action App::parseActionArgument(cxxopts::ParseResult& args) {
 // You will have to uncomment the code, which has been left commented to ensure
 // the coursework framework compiles (i.e., it calls functions that you must
 // implement, once you have implemented them you may uncomment this function).
-std::string App::getJSON(Wallet& wObj) {
-  return wObj.str();
-}
+std::string App::getJSON(Wallet &wObj) { return wObj.str(); }
 
 // TODO Write a function, getJSON, that returns a std::string containing the
 //  JSON representation of a specific Category in a Wallet object.
@@ -205,8 +199,7 @@ std::string App::getJSON(Wallet& wObj) {
 // You will have to uncomment the code, which has been left commented to ensure
 // the coursework framework compiles (i.e., it calls functions that you must
 // implement, once you have implemented them you may uncomment this function).
-std::string App::getJSON(Wallet& wObj,
-                         const std::string& c) {
+std::string App::getJSON(Wallet &wObj, const std::string &c) {
   auto cObj = wObj.getCategory(c);
   return cObj.str();
 }
@@ -218,9 +211,8 @@ std::string App::getJSON(Wallet& wObj,
 // You will have to uncomment the code, which has been left commented to ensure
 // the coursework framework compiles (i.e., it calls functions that you must
 // implement, once you have implemented them you may uncomment this function).
-std::string App::getJSON(Wallet& wObj,
-                         const std::string& c,
-                         const std::string& i) {
+std::string App::getJSON(Wallet &wObj, const std::string &c,
+                         const std::string &i) {
   auto cObj = wObj.getCategory(c);
   const auto iObj = cObj.getItem(i);
   return iObj.str();
@@ -233,23 +225,21 @@ std::string App::getJSON(Wallet& wObj,
 // You will have to uncomment the code, which has been left commented to ensure
 // the coursework framework compiles (i.e., it calls functions that you must
 // implement, once you have implemented them you may uncomment this function).
-std::string App::getJSON(Wallet& wObj,
-                         const std::string& c,
-                         const std::string& i,
-                         const std::string& e) {
+std::string App::getJSON(Wallet &wObj, const std::string &c,
+                         const std::string &i, const std::string &e) {
   auto cObj = wObj.getCategory(c);
   auto iObj = cObj.getItem(i);
   return iObj.getEntry(e);
 }
 
-bool App::performCreate(Wallet& wObj, cxxopts::ParseResult& args) {
+bool App::performCreate(Wallet &wObj, cxxopts::ParseResult &args) {
   if (args.count("category")) {
     const std::string c = args["category"].as<std::string>();
-    Category& cObj = wObj.newCategory(c);
+    Category &cObj = wObj.newCategory(c);
 
     if (args.count("item")) {
       const std::string i = args["item"].as<std::string>();
-      Item& iObj = cObj.newItem(i);
+      Item &iObj = cObj.newItem(i);
 
       if (args.count("entry")) {
         const std::string e = args["entry"].as<std::string>();
@@ -259,21 +249,21 @@ bool App::performCreate(Wallet& wObj, cxxopts::ParseResult& args) {
 
         try {
           key = e.substr(0, e.find(','));
-          value = e.substr(e.find(',')+1);
-        } catch (const std::out_of_range& ex) { /* do nothing */ }
+          value = e.substr(e.find(',') + 1);
+        } catch (const std::out_of_range &ex) { /* do nothing */
+        }
 
         iObj.addEntry(key, value);
       }
     }
 
     return true;
-
   }
 
   throw std::runtime_error("must provide a category, item or entry to create");
 }
 
-bool App::performRead(Wallet& wObj, cxxopts::ParseResult& args) noexcept {
+bool App::performRead(Wallet &wObj, cxxopts::ParseResult &args) noexcept {
   if (args.count("category")) {
     const std::string c = args["category"].as<std::string>();
 
@@ -309,7 +299,7 @@ bool App::performRead(Wallet& wObj, cxxopts::ParseResult& args) noexcept {
 // You can update more than one thing at the same time
 //
 // Throws std::out_of_range for unknown values
-bool App::performUpdate(Wallet& wObj, cxxopts::ParseResult& args) {
+bool App::performUpdate(Wallet &wObj, cxxopts::ParseResult &args) {
   if (args.count("category")) {
     std::string old_, new_;
 
@@ -331,14 +321,14 @@ bool App::performUpdate(Wallet& wObj, cxxopts::ParseResult& args) {
           return false;
         }
         c = new_;
-      } catch(const std::out_of_range& ex) {
+      } catch (const std::out_of_range &ex) {
         throw std::out_of_range("unknown category");
       }
     } else if (!wObj.containsCategory(c)) {
       throw std::out_of_range("unknown category");
     }
 
-    Category& cObj = wObj.getCategory(c);
+    Category &cObj = wObj.getCategory(c);
 
     // update item ident?
     std::string i = args["item"].as<std::string>();
@@ -351,7 +341,7 @@ bool App::performUpdate(Wallet& wObj, cxxopts::ParseResult& args) {
         throw std::runtime_error("could not extract new item ident");
       }
 
-      Item& iObj = cObj.getItem(old_);
+      Item &iObj = cObj.getItem(old_);
       iObj.setIdent(new_);
       if (!cObj.addItem(iObj) || !cObj.deleteItem(old_)) {
         return false;
@@ -361,7 +351,7 @@ bool App::performUpdate(Wallet& wObj, cxxopts::ParseResult& args) {
       throw std::out_of_range("unknown item");
     }
 
-    Item& iObj = cObj.getItem(i);
+    Item &iObj = cObj.getItem(i);
 
     // update entry value or ident?
     std::string e = args["entry"].as<std::string>();
@@ -374,7 +364,7 @@ bool App::performUpdate(Wallet& wObj, cxxopts::ParseResult& args) {
         std::string newkey_, val_;
         if (evPos != std::string::npos) {
           old_ = e.substr(0, ePos);
-          newkey_ = e.substr(ePos+1, evPos-ePos-1);
+          newkey_ = e.substr(ePos + 1, evPos - ePos - 1);
           val_ = e.substr(evPos + 1);
         } else {
           old_ = e.substr(0, ePos);
@@ -417,7 +407,7 @@ bool App::performUpdate(Wallet& wObj, cxxopts::ParseResult& args) {
 //  'category'
 // If a non-existant category, item, or entry key is supplied, throw a
 //   std::invalid_argument with the message of the problematic argument
-bool App::performDelete(Wallet& wObj, cxxopts::ParseResult& args) {
+bool App::performDelete(Wallet &wObj, cxxopts::ParseResult &args) {
   if (args.count("category")) {
     const std::string c = args["category"].as<std::string>();
 
@@ -425,7 +415,7 @@ bool App::performDelete(Wallet& wObj, cxxopts::ParseResult& args) {
       throw std::invalid_argument("category");
     }
 
-    Category& cObj = wObj.getCategory(c);
+    Category &cObj = wObj.getCategory(c);
 
     if (args.count("item")) {
       const std::string i = args["item"].as<std::string>();
@@ -434,7 +424,7 @@ bool App::performDelete(Wallet& wObj, cxxopts::ParseResult& args) {
         throw std::invalid_argument("item");
       }
 
-      Item& iObj = cObj.getItem(i);
+      Item &iObj = cObj.getItem(i);
 
       if (args.count("entry")) {
         // delete entry
