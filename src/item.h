@@ -37,7 +37,7 @@ public:
     return ident;
   }
 
-  inline void setIdent(std::string ident) {
+  inline void setIdent(std::string ident) noexcept {
     this->ident = ident;
   }
 
@@ -49,9 +49,9 @@ public:
     return entries.empty();
   }
 
-  bool addEntry(std::string ident, std::string value);
+  bool addEntry(std::string ident, std::string value) noexcept;
   const std::string& getEntry(const std::string& ident) const;
-  bool deleteEntry(const std::string& ident);
+  bool deleteEntry(const std::string& ident) noexcept;
 
   bool inline containsEntry(const std::string& ident) const noexcept {
     return entries.count(ident) != 0;

@@ -10,8 +10,8 @@
 // Catch2 — https://github.com/catchorg/Catch2
 // Catch2 is licensed under the BOOST license
 // -----------------------------------------------------
-// This file contains tests for the Item container you
-// must set up in your coursework.
+// This file contains tests adding, getting and deleting
+// entries in the Item container.
 // -----------------------------------------------------
 
 #include "../src/lib_catch.hpp"
@@ -40,7 +40,7 @@ SCENARIO( "an empty Item can be constructed successfully", "[item]" ) {
 
 } // SCENARIO
 
-SCENARIO( "Entries can be added to a Item", "[item]" ) {
+SCENARIO( "Entries can be added to and retrieved from an Item", "[item]" ) {
 
   GIVEN( "an Item object with identifier 'Test'" ) {
 
@@ -93,6 +93,54 @@ SCENARIO( "Entries can be added to a Item", "[item]" ) {
           REQUIRE( i.getEntry(key) == value );
 
         } // THEN
+
+      } // THEN
+
+    } // WHEN
+
+  } // GIVEN
+
+} // SCENARIO
+
+SCENARIO( "Entries can be added to and deleted from an Item", "[item]" ) {
+
+  GIVEN( "an Item object with identifier 'Test'" ) {
+
+    Item i { "Test" };
+
+    std::string key = "url";
+    std::string value = "https://www.google.com/";
+
+    WHEN( "an entry with key '" + key + "' and value '" + value + "' can be added" ) {
+
+      REQUIRE( i.addEntry(key, value) == true );
+
+      THEN( "the Item contains 1 entry" ) {
+
+        REQUIRE( i.size() == 1 );
+        REQUIRE_FALSE( i.empty() );
+
+      } // THEN
+
+      THEN( "the entry can be retrieved by the key '" + key + "'" ) {
+
+        REQUIRE( i.getEntry(key) == value );
+
+      } // THEN
+
+      THEN( "deleting a non-existent entry ('blah') will not change the Item" ) {
+
+        REQUIRE_FALSE( i.deleteEntry("blah") );
+        REQUIRE( i.getEntry(key) == value );
+        REQUIRE( i.size() == 1 );
+
+      } // THEN
+
+      THEN( "deleting the existent entry ('" + key + "') will leave the Item empty" ) {
+
+        REQUIRE( i.deleteEntry(key) );
+        REQUIRE_THROWS_AS( i.getEntry(key), std::out_of_range );
+        REQUIRE( i.size() == 0 );
 
       } // THEN
 

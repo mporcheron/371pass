@@ -79,8 +79,9 @@ Category& Wallet::getCategory(const std::string& ident) {
 
 // TODO Write a function, deleteEntry, that takes one parameter, a Category
 //  identifier, and deletes it from the container, and returns true if the
-//  Category was deleted. If no category exists, return false.
-bool Wallet::deleteCategory(const std::string& ident) {
+//  Category was deleted. If no category exists, return false. You must promise
+//  not to throw an exception.
+bool Wallet::deleteCategory(const std::string& ident) noexcept {
   return categories.erase(ident) == 1;
 }
 
@@ -206,7 +207,9 @@ nlohmann::json Wallet::json() const {
 }
 
 // TODO Write a function, str, that takes no parameters and returns a
-//  std::string of the JSON representative of the data in the Wallet.
+//  std::string of the JSON representation of the data in the Wallet.
+//
+// See the coursework specification for how this JSON should look.
 //
 // Example:
 //  Wallet w;

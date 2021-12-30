@@ -27,7 +27,7 @@ Category::Category(std::string ident) : ident(ident), items() { }
 //  identifier already exists, then the existing object should be returned.
 //  Throw a std::runtime_error if the Item object cannot be inserted into the
 //  container.
-Item& Category::newItem(const std::string& ident) {
+Item& Category::newItem(const std::string& ident)  {
   const auto& result = items.find(ident);
 
   if (result == items.end()) {
@@ -74,8 +74,9 @@ Item& Category::getItem(const std::string& ident) {
 
 // TODO Write a function, deleteItem, that takes one parameter, an Item
 //  identifier, deletes it from the container, and returns true if the Item was
-//  deleted. If no Item exists, return false.
-bool Category::deleteItem(const std::string& ident) {
+//  deleted. If no Item exists, return false.  You must promise not to throw
+//  an exception.
+bool Category::deleteItem(const std::string& ident) noexcept {
   return items.erase(ident) == 1;
 }
 
@@ -99,7 +100,9 @@ nlohmann::json Category::json() const {
 }
 
 // TODO Write a function, str, that takes no parameters and returns a
-//  std::string of the JSON representative of the data in the Category.
+//  std::string of the JSON representation of the data in the Category.
+//
+// See the coursework specification for how this JSON should look.
 //
 // Example:
 //  Category c {"ident"};

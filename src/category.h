@@ -32,7 +32,7 @@ public:
     return ident;
   }
 
-  inline void setIdent(std::string ident) {
+  inline void setIdent(std::string ident) noexcept {
     this->ident = ident;
   }
 
@@ -47,7 +47,7 @@ public:
   Item& newItem(const std::string& ident);
   bool addItem(Item ident);
   Item& getItem(const std::string& ident);
-  bool deleteItem(const std::string& ident);
+  bool deleteItem(const std::string& ident) noexcept;
 
   bool inline containsItem(const std::string& ident) const noexcept {
     return items.count(ident) != 0;

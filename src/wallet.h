@@ -40,7 +40,7 @@ public:
   Category& newCategory(const std::string& ident);
   bool addCategory(Category category);
   Category& getCategory(const std::string& ident);
-  bool deleteCategory(const std::string& ident);
+  bool deleteCategory(const std::string& ident) noexcept;
 
   bool inline containsCategory(const std::string& ident) const noexcept {
     return categories.count(ident) != 0;

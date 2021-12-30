@@ -10,8 +10,8 @@
 // Catch2 — https://github.com/catchorg/Catch2
 // Catch2 is licensed under the BOOST license
 // -----------------------------------------------------
-// This file contains tests for the Category container
-// you must set up in your coursework.
+// This file contains tests adding, getting and deleting
+// Categorys in the Wallet container.
 // -----------------------------------------------------
 
 #include "../src/lib_catch.hpp"
@@ -40,7 +40,7 @@ SCENARIO( "an empty Wallet can be constructed successfully", "[wallet][empty" ) 
 
 } // SCENARIO
 
-SCENARIO( "Category objects can be added to a Wallet", "[wallet]" ) {
+SCENARIO( "Category objects can be added to and retrieved from a Wallet", "[wallet]" ) {
 
   GIVEN( "a Wallet object" ) {
 
@@ -96,6 +96,47 @@ SCENARIO( "Category objects can be added to a Wallet", "[wallet]" ) {
           REQUIRE( w.getCategory(ident3) == c3 );
 
         } // THEN
+
+      } // THEN
+
+    } // WHEN
+
+  } // GIVEN
+
+} // SCENARIO
+
+SCENARIO( "Category objects can be added to and deleted from a Wallet", "[wallet]" ) {
+
+  GIVEN( "a Wallet object" ) {
+
+    Wallet w {};
+
+    const std::string ident = "Test";
+
+    WHEN( "a Category with identifier '" + ident + "' can be added" ) {
+
+      Category c { ident };
+
+      REQUIRE( w.addCategory(c) == true );
+
+      THEN( "the Wallet contains 1 Category" ) {
+
+        REQUIRE( w.size() == 1 );
+        REQUIRE_FALSE( w.empty() );
+
+      } // THEN
+
+      THEN( "the Category can be retrieved by the ident '" + ident + "'" ) {
+
+        REQUIRE( w.getCategory(ident) == c );
+
+      } // THEN
+
+      THEN( "deleting the existent Category ('" + ident + "') will leave the Wallet empty" ) {
+
+        REQUIRE( w.deleteCategory(ident) );
+        REQUIRE_THROWS_AS( w.getCategory(ident), std::out_of_range );
+        REQUIRE( w.size() == 0 );
 
       } // THEN
 

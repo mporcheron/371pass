@@ -26,7 +26,7 @@ Item::Item(std::string ident) : ident(ident), entries() { /* do nothing */ }
 // TODO Write a function, addEntry, that takes two parameters, an entry
 //  identifier and value and returns true if the entry was inserted into the
 //  container or false otherwise.
-bool Item::addEntry(std::string ident, std::string value) {
+bool Item::addEntry(std::string ident, std::string value) noexcept {
   entries[ident] = value;
   return true;
 }
@@ -40,8 +40,9 @@ const std::string& Item::getEntry(const std::string& ident) const {
 
 // TODO Write a function, deleteEntry, that takes one parameter, an entry
 //  identifier, deletes it from the container, and returns true if the Item was
-//  deleted. If no entry exists, return false.
-bool Item::deleteEntry(const std::string& ident) {
+//  deleted. If no entry exists, return false. You must promise not to throw
+//  an exception.
+bool Item::deleteEntry(const std::string& ident) noexcept {
   return entries.erase(ident) == 1;
 }
 
@@ -66,7 +67,9 @@ nlohmann::json Item::json() const {
 }
 
 // TODO Write a function, str, that takes no parameters and returns a
-//  std::string of the JSON representative of the data in the Item.
+//  std::string of the JSON representation of the data in the Item.
+//
+// See the coursework specification for how this JSON should look.
 //
 // Example:
 //  Item i {"ident"};

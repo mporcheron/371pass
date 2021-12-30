@@ -10,8 +10,8 @@
 // Catch2 — https://github.com/catchorg/Catch2
 // Catch2 is licensed under the BOOST license
 // -----------------------------------------------------
-// This file contains tests for the Category container
-// you must set up in your coursework.
+// This file contains tests adding, getting and deleting
+// Items in the Category container.
 // -----------------------------------------------------
 
 #include "../src/lib_catch.hpp"
@@ -40,13 +40,13 @@ SCENARIO( "an empty Category can be constructed successfully", "[category]" ) {
 
 } // SCENARIO
 
-SCENARIO( "Items can be added to a Category", "[category]" ) {
+SCENARIO( "Items can be added to and retrieved from a Category", "[category]" ) {
 
-  GIVEN( "a Category object with identifier 'Test'" ) {
+  const std::string ident = "Test";
 
-    Category c { "Test" };
+  GIVEN( "a Category object with identifier '" + ident + "'" ) {
 
-    const std::string ident = "Test";
+    Category c { ident };
 
     WHEN( "an Item with identifier '" + ident + "' can be added" ) {
 
@@ -96,6 +96,55 @@ SCENARIO( "Items can be added to a Category", "[category]" ) {
           REQUIRE( c.getItem(ident3) == i3 );
 
         } // THEN
+
+      } // THEN
+
+    } // WHEN
+
+  } // GIVEN
+
+} // SCENARIO
+
+SCENARIO( "Items can be added to and deleted from a Category", "[category]" ) {
+
+  const std::string ident = "Test";
+
+  GIVEN( "a Category object with identifier '" + ident + "'" ) {
+
+    Category c { ident };
+
+    WHEN( "an Item with identifier '" + ident + "' can be added" ) {
+
+      Item i { ident };
+
+      REQUIRE( c.addItem(i) == true );
+
+      THEN( "the Category contains 1 Item" ) {
+
+        REQUIRE( c.size() == 1 );
+        REQUIRE_FALSE( c.empty() );
+
+      } // THEN
+
+      THEN( "the Item can be retrieved by the ident '" + ident + "'" ) {
+
+        REQUIRE( c.getItem(ident) == i );
+
+      } // THEN
+
+      THEN( "deleting a non-existent Item ('blah') will not change the Category" ) {
+
+        REQUIRE_FALSE( c.deleteItem("blah") );
+        REQUIRE( c.getItem(ident) == i );
+        REQUIRE( c.size() == 1 );
+
+      } // THEN
+
+      THEN( "deleting the existent Item ('" + ident + "') will leave the Category empty" ) {
+
+        REQUIRE( c.deleteItem(ident) );
+        REQUIRE_THROWS_AS( c.getItem(ident), std::out_of_range );
+        REQUIRE( c.size() == 0 );
 
       } // THEN
 

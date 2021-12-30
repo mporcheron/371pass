@@ -23,7 +23,7 @@
 
 #include "../src/371pass.h"
 
-SCENARIO( "the action program argument can be parsed correctly", "[args][action]" ) {
+SCENARIO( "the action program argument can be parsed correctly", "[args]" ) {
 
   GIVEN( "a --action program argument and value" ) {
 
