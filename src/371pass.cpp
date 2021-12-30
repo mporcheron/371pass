@@ -32,6 +32,9 @@
 // meant to be challenging and testing your understanding of programming in C++.
 // Part of the challenge is figuring things out on your own. That is a major
 // part of software development.
+//
+// Example:
+//  int main(int argc, char *argv[]) { return App::run(argc, argv); }
 int App::run(int argc, char *argv[]) {
   auto options = App::cxxoptsSetup();
   try {
@@ -118,6 +121,10 @@ int App::run(int argc, char *argv[]) {
 }
 
 // Create a cxxopts instance. You do not need to modify this function.
+//
+// Example:
+//  auto options = App::cxxoptsSetup();
+//  auto args = options.parse(argc, argv);
 cxxopts::Options App::cxxoptsSetup() {
   cxxopts::Options cxxopts("371pass", "Student ID: " + STUDENT_NUMBER + "\n");
 
@@ -155,10 +162,15 @@ cxxopts::Options App::cxxoptsSetup() {
   return cxxopts;
 }
 
-// TODO Check through, understand, and edit this function so that it works in a
-//  case-insensitive way (e.g., an argument value of 'CREATE' would still work).
-//  If an invalid value is given in a string, throw an std::invalid_argument
-//  exception.
+// TODO Rewrite this function so that it works. This function should
+//  case-insensitively check the action argument retrieved from cxxopts and
+//  convert this to a value from the ACTION enum. If an invalid value is given
+//  in a string, throw an std::invalid_argument exception.
+//
+// Example:
+//  auto options = App::cxxoptsSetup();
+//  auto args = options.parse(argc, argv);
+//  App::Action action = parseActionArgument(args);
 App::Action App::parseActionArgument(cxxopts::ParseResult &args) {
   try {
     std::string input = args["action"].as<std::string>();
@@ -190,6 +202,10 @@ App::Action App::parseActionArgument(cxxopts::ParseResult &args) {
 // You will have to uncomment the code, which has been left commented to ensure
 // the coursework framework compiles (i.e., it calls functions that you must
 // implement, once you have implemented them you may uncomment this function).
+//
+// Example:
+//  Wallet wObj{};
+//  std::cout << getJSON(wObj);
 std::string App::getJSON(Wallet &wObj) { return wObj.str(); }
 
 // TODO Write a function, getJSON, that returns a std::string containing the
@@ -199,6 +215,11 @@ std::string App::getJSON(Wallet &wObj) { return wObj.str(); }
 // You will have to uncomment the code, which has been left commented to ensure
 // the coursework framework compiles (i.e., it calls functions that you must
 // implement, once you have implemented them you may uncomment this function).
+//
+// Example:
+//  Wallet wObj{};
+//  std::string c = "category argument value";
+//  std::cout << getJSON(wObj, c);
 std::string App::getJSON(Wallet &wObj, const std::string &c) {
   auto cObj = wObj.getCategory(c);
   return cObj.str();
@@ -211,6 +232,12 @@ std::string App::getJSON(Wallet &wObj, const std::string &c) {
 // You will have to uncomment the code, which has been left commented to ensure
 // the coursework framework compiles (i.e., it calls functions that you must
 // implement, once you have implemented them you may uncomment this function).
+//
+// Example:
+//  Wallet wObj{};
+//  std::string c = "category argument value";
+//  std::string i = "item argument value";
+//  std::cout << getJSON(wObj, c, i);
 std::string App::getJSON(Wallet &wObj, const std::string &c,
                          const std::string &i) {
   auto cObj = wObj.getCategory(c);
@@ -225,6 +252,13 @@ std::string App::getJSON(Wallet &wObj, const std::string &c,
 // You will have to uncomment the code, which has been left commented to ensure
 // the coursework framework compiles (i.e., it calls functions that you must
 // implement, once you have implemented them you may uncomment this function).
+//
+// Example:
+//  Wallet wObj{};
+//  std::string c = "category argument value";
+//  std::string i = "item argument value";
+//  std::string e = "entry argument value";
+//  std::cout << getJSON(wObj, c, i, e);
 std::string App::getJSON(Wallet &wObj, const std::string &c,
                          const std::string &i, const std::string &e) {
   auto cObj = wObj.getCategory(c);

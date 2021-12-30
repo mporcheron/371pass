@@ -50,6 +50,8 @@ public:
   nlohmann::json json() const;
   std::string str() const;
 
+  friend bool operator==(const Wallet &lhs, const Wallet &rhs);
+
   // Wrappers for iterating over the nested container
   inline CategoryContainer::iterator find(const std::string &ident) {
     return categories.find(ident);
