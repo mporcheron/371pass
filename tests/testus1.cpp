@@ -25,7 +25,7 @@
 
 SCENARIO(
     "the action program argument can be parsed case insensitively correctly",
-    "[extended][args][action]") {
+    "[args][extended]") {
 
   GIVEN("a --action program argument and value") {
 

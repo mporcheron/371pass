@@ -334,7 +334,7 @@ bool App::performRead(Wallet &wObj, cxxopts::ParseResult &args) noexcept {
 //
 // Throws std::out_of_range for unknown values
 bool App::performUpdate(Wallet &wObj, cxxopts::ParseResult &args) {
-  if (args.count("category")) {
+  if (args.count("category") > 0) {
     std::string old_, new_;
 
     // update category ident?
@@ -365,65 +365,74 @@ bool App::performUpdate(Wallet &wObj, cxxopts::ParseResult &args) {
     Category &cObj = wObj.getCategory(c);
 
     // update item ident?
-    std::string i = args["item"].as<std::string>();
-    auto iPos = i.find(':');
-    if (iPos != std::string::npos) {
-      try {
-        old_ = i.substr(0, iPos);
-        new_ = i.substr(iPos + 1);
-      } catch (const std::out_of_range &ex) {
-        throw std::runtime_error("could not extract new item ident");
-      }
-
-      Item &iObj = cObj.getItem(old_);
-      iObj.setIdent(new_);
-      if (!cObj.addItem(iObj) || !cObj.deleteItem(old_)) {
-        return false;
-      }
-      i = new_;
-    } else if (!cObj.containsItem(i)) {
-      throw std::out_of_range("unknown item");
-    }
-
-    Item &iObj = cObj.getItem(i);
-
-    // update entry value or ident?
-    std::string e = args["entry"].as<std::string>();
-    auto ePos = e.find(':');
-    auto evPos = e.find(',');
-
-    if (ePos != std::string::npos) {
-      // change key (or key and value)
-      try {
-        std::string newkey_, val_;
-        if (evPos != std::string::npos) {
-          old_ = e.substr(0, ePos);
-          newkey_ = e.substr(ePos + 1, evPos - ePos - 1);
-          val_ = e.substr(evPos + 1);
-        } else {
-          old_ = e.substr(0, ePos);
-          val_ = e.substr(ePos + 1);
+    if (args.count("item") > 0) {
+      std::string i = args["item"].as<std::string>();
+      auto iPos = i.find(':');
+      if (iPos != std::string::npos) {
+        try {
+          old_ = i.substr(0, iPos);
+          new_ = i.substr(iPos + 1);
+        } catch (const std::out_of_range &ex) {
+          throw std::runtime_error("could not extract new item ident");
         }
 
-        if (!iObj.addEntry(newkey_, val_) || !iObj.deleteEntry(old_)) {
+        Item &iObj = cObj.getItem(old_);
+        iObj.setIdent(new_);
+        if (!cObj.addItem(iObj) || !cObj.deleteItem(old_)) {
           return false;
         }
-
-      } catch (const std::out_of_range &ex) {
-        throw std::runtime_error("could not extract new entry data");
+        i = new_;
+      } else if (!cObj.containsItem(i)) {
+        throw std::out_of_range("unknown item");
       }
-    } else if (evPos != std::string::npos) {
-      // change value only
-      try {
-        std::string key_ = e.substr(0, evPos);
-        new_ = e.substr(evPos + 1);
 
-        if (!iObj.addEntry(key_, new_)) {
-          return false;
+      Item &iObj = cObj.getItem(i);
+
+      // update entry value or ident?
+      if (args.count("entry") > 0) {
+        std::string e = args["entry"].as<std::string>();
+        auto ePos = e.find(':');
+        auto evPos = e.find(',');
+
+        if (ePos != std::string::npos) {
+          // change key (or key and value)
+          try {
+            std::string newkey_, val_;
+            if (evPos != std::string::npos) {
+              old_ = e.substr(0, ePos);
+              newkey_ = e.substr(ePos + 1, evPos - ePos - 1);
+              val_ = e.substr(evPos + 1);
+            } else {
+              old_ = e.substr(0, ePos);
+              newkey_ = e.substr(ePos + 1);
+              val_ = iObj.getEntry(old_);
+            }
+
+            try {
+              // this will overwrite anything at newkey_
+              iObj.addEntry(newkey_, val_);
+              iObj.deleteEntry(old_);
+            } catch(const std::exception& ex) {
+              throw std::runtime_error("could not update entry key or key and value");
+            }
+          } catch (const std::out_of_range &ex) {
+            throw std::runtime_error("could not extract new entry data");
+          }
+        } else if (evPos != std::string::npos) {
+          // change value only
+          try {
+            std::string key_ = e.substr(0, evPos);
+            new_ = e.substr(evPos + 1);
+
+            try {
+              iObj.addEntry(key_, new_);
+            } catch(const std::exception& ex) {
+              throw std::runtime_error("could not update entry value");
+            }
+          } catch (const std::out_of_range &ex) {
+            throw std::runtime_error("could not extract new entry value");
+          }
         }
-
-      } catch (const std::out_of_range &ex) {
-        throw std::runtime_error("could not extract new entry value");
       }
     }
 
