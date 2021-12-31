@@ -12,5 +12,4 @@ add_executable(371pass
         src/item.cpp
         src/371pass.cpp
         src/wallet.cpp
-        bin/catch.o
-        tests/test7.cpp)
+        src/main.cpp)
