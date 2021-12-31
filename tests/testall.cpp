@@ -5,7 +5,7 @@
 // Author: Martin Porcheron
 //         m.a.w.porcheron@swansea.ac.uk
 //
-// Canvas: https://canvas.swansea.ac.uk/courses/15581
+// Canvas: https://canvas.swansea.ac.uk/courses/24793
 // -----------------------------------------------------
 // Catch2 — https://github.com/catchorg/Catch2
 // Catch2 is licensed under the BOOST license
@@ -20,8 +20,6 @@
 #include "test5.cpp"
 #include "test6.cpp"
 #include "test7.cpp"
-//#include "test8.cpp"
-//#include "test9.cpp"
-//#include "test10.cpp"
-//#include "test11.cpp"
-//#include "test12.cpp"
+#include "test8.cpp"
+#include "test9.cpp"
+

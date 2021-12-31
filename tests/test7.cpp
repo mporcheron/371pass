@@ -5,17 +5,15 @@
 // Author: Martin Porcheron
 //         m.a.w.porcheron@swansea.ac.uk
 //
-// Canvas: https://canvas.swansea.ac.uk/courses/15581
+// Canvas: https://canvas.swansea.ac.uk/courses/24793
 // -----------------------------------------------------
 // Catch2 — https://github.com/catchorg/Catch2
 // Catch2 is licensed under the BOOST license
 // -----------------------------------------------------
 // This file tests 371pass output for the database
-// argument and 'create' value of the action argument.
-// This test works by calling on your program to create
-// a category, item, and an entry, and each time
-// calls upon your program to load the JSON file to
-// check the category/item/entry exists.
+// argument and 'read' value of the action argument.
+// This test works by capturing the stdout of your
+// program.
 // -----------------------------------------------------
 
 #include "../src/lib_catch.hpp"
@@ -29,10 +27,25 @@
 
 #include "../src/371pass.h"
 
-SCENARIO(
-    "The database and action program arguments can be parsed correctly "
-    "such that a file can be opened, read, parsed, modified, and written to",
-    "[args]") {
+// Redirect std::cout to a buffer
+// by Björn Pollex
+// via https://stackoverflow.com/a/5419388
+// licensed under CC BY-SA 3.0.
+class CoutRedirect {
+private:
+  std::streambuf *old;
+
+public:
+  CoutRedirect(std::streambuf *new_buffer)
+      : old(std::cout.rdbuf(new_buffer)) { /* do nothing */
+  }
+
+  ~CoutRedirect() { std::cout.rdbuf(old); }
+};
+
+SCENARIO("The database and action program arguments can be parsed correctly "
+         "such that a file can be opened, read, parsed, and output to stdout",
+         "[args]") {
 
   const std::string filePath = "./tests/testdatabase.json";
 
@@ -64,134 +77,37 @@ SCENARIO(
                   "\"password\":\"r43rfsffdsfdsf\",\"url\":\"https://"
                   "www.twitter.com/\",\"username\":\"example@gmail.com\"}}}"));
 
-    const std::string testCategory = "TestCategory";
-    const std::string testItem = "TestItem";
-    const std::string testEntryKey = "TestEntryKey";
-    const std::string testEntryValue = "TestEntryValue";
-    const std::string testEntry = testEntryKey + "," + testEntryValue;
-
     WHEN("the db program argument is '" + filePath +
-         "', the action program argument is 'create'") {
+         "' and the action program argument is 'read'") {
 
-      AND_WHEN("and the category program argument is '" + testCategory + "'") {
+      Argv argvObj({"test", "--db", filePath.c_str(), "--action", "read"});
+      auto **argv = argvObj.argv();
+      auto argc = argvObj.argc();
 
-        Argv argvObj({"test", "--db", filePath.c_str(), "--action", "create",
-                      "--category", testCategory.c_str()});
-        auto **argv = argvObj.argv();
-        auto argc = argvObj.argc();
+      std::stringstream buffer;
+      CoutRedirect originalBuffer{buffer.rdbuf()};
 
-        THEN("no exception is thrown") {
+      THEN("the expected JSON output is printed to stdout") {
 
-          REQUIRE_NOTHROW(App::run(argc, argv));
+        REQUIRE_NOTHROW(App::run(argc, argv));
 
-          AND_WHEN(
-              "loading the saved file into a new Wallet object will work") {
+        std::string output = buffer.str();
 
-            Wallet w{};
-            REQUIRE(w.empty());
-            REQUIRE_NOTHROW(w.load(filePath));
+        REQUIRE(
+            output.find(
+                "{\"Bank Accounts\":{\"Starling\":{\"Account "
+                "Number\":\"12345678\",\"Name\":\"Mr John Doe\",\"Sort "
+                "Code\":\"12-34-56\"}},\"Websites\":{\"Facebook\":{"
+                "\"password\":\"pass1234fb\",\"url\":\"https://"
+                "www.facebook.com/"
+                "\",\"username\":\"example@gmail.com\"},\"Google\":{"
+                "\"password\":\"pass1234\",\"url\":\"https://www.google.com/"
+                "\",\"username\":\"example@gmail.com\"},\"Twitter\":{"
+                "\"password\":\"r43rfsffdsfdsf\",\"url\":\"https://"
+                "www.twitter.com/\",\"username\":\"example@gmail.com\"}}}") ==
+            0);
 
-            AND_THEN("the new Wallet will contain the Category object") {
-
-              REQUIRE_NOTHROW(w.getCategory(testCategory));
-              REQUIRE(w.getCategory(testCategory).size() == 0);
-
-            } // AND_THEN
-
-            AND_WHEN("and the item program argument is '" + testItem + "'") {
-
-              Argv argvObj({"test", "--db", filePath.c_str(), "--action",
-                            "create", "--category", testCategory.c_str(), "--item",
-                            testItem.c_str()});
-              auto **argv = argvObj.argv();
-              auto argc = argvObj.argc();
-
-              THEN("no exception is thrown") {
-
-                REQUIRE_NOTHROW(App::run(argc, argv));
-
-                AND_WHEN("loading the saved file into a new Wallet object will "
-                         "work") {
-
-                  Wallet w{};
-                  REQUIRE(w.empty());
-                  REQUIRE_NOTHROW(w.load(filePath));
-
-                  AND_THEN("the new Wallet will contain the Category and Item "
-                           "objects") {
-
-                    REQUIRE_NOTHROW(w.getCategory(testCategory));
-                    REQUIRE(w.getCategory(testCategory).size() == 1);
-                    REQUIRE_NOTHROW(w.getCategory(testCategory).getItem(testItem));
-                    REQUIRE(w.getCategory(testCategory).getItem(testItem).size() ==
-                            0);
-
-                  } // AND_THEN
-
-                  AND_WHEN("and the entry program argument is '" + testEntry +
-                           "'") {
-
-                    Argv argvObj({
-                        "test",
-                        "--db",
-                        filePath.c_str(),
-                        "--action",
-                        "create",
-                        "--category",
-                        testCategory.c_str(),
-                        "--item",
-                        testItem.c_str(),
-                        "--entry",
-                        testEntry.c_str(),
-                    });
-                    auto **argv = argvObj.argv();
-                    auto argc = argvObj.argc();
-
-                    THEN("no exception is thrown") {
-
-                      REQUIRE_NOTHROW(App::run(argc, argv));
-
-                      AND_WHEN("loading the saved file into a new Wallet "
-                               "object will work") {
-
-                        Wallet w{};
-                        REQUIRE(w.empty());
-                        REQUIRE_NOTHROW(w.load(filePath));
-
-                        AND_THEN("the new Wallet will contain the Category and "
-                                 "Item objects and entry") {
-
-                          REQUIRE_NOTHROW(w.getCategory(testCategory));
-                          REQUIRE(w.getCategory(testCategory).size() == 1);
-                          REQUIRE_NOTHROW(
-                              w.getCategory(testCategory).getItem(testItem));
-                          REQUIRE(w.getCategory(testCategory)
-                                      .getItem(testItem)
-                                      .size() == 1);
-                          REQUIRE(w.getCategory(testCategory)
-                                      .getItem(testItem)
-                                      .getEntry(testEntryKey) ==
-                                  testEntryValue);
-
-                        } // AND_THEN
-
-                      } // AND_WHEN
-
-                    } // THEN
-
-                  } // AND_WHEN
-
-                } // AND_WHEN
-
-              } // THEN
-
-            } // AND_WHEN
-
-          } // AND_WHEN
-
-        } // THEN
-
-      } // AND_WHEN
+      } // THEN
 
     } // WHEN
 

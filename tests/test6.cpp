@@ -5,52 +5,40 @@
 // Author: Martin Porcheron
 //         m.a.w.porcheron@swansea.ac.uk
 //
-// Canvas: https://canvas.swansea.ac.uk/courses/15581
+// Canvas: https://canvas.swansea.ac.uk/courses/24793
 // -----------------------------------------------------
 // Catch2 — https://github.com/catchorg/Catch2
 // Catch2 is licensed under the BOOST license
 // -----------------------------------------------------
-// This file tests 371pass output for the database
-// argument and 'read' value of the action argument.
-// This test works by capturing the stdout of your
-// program.
+// This file contains tests saving JSON files from a
+// the Wallet.
 // -----------------------------------------------------
 
 #include "../src/lib_catch.hpp"
 
 #include <fstream>
-#include <iostream>
+#include <sstream>
 #include <string>
 
 #include "../src/lib_cxxopts.hpp"
 #include "../src/lib_cxxopts_argv.hpp"
 
-#include "../src/371pass.h"
+#include "../src/wallet.h"
 
-// Redirect std::cout to a buffer
-// by Björn Pollex
-// via https://stackoverflow.com/a/5419388
-// licensed under CC BY-SA 3.0.
-class CoutRedirect {
-private:
-  std::streambuf *old;
+SCENARIO("A Wallet object can save to a JSON file", "[wallet]") {
 
-public:
-  CoutRedirect(std::streambuf *new_buffer)
-      : old(std::cout.rdbuf(new_buffer)) { /* do nothing */
-  }
-
-  ~CoutRedirect() { std::cout.rdbuf(old); }
-};
-
-SCENARIO("The database and action program arguments can be parsed correctly "
-         "such that a file can be opened, read, parsed, and output to stdout",
-         "[args]") {
-
-  const std::string filePath = "./tests/testdatabase.json";
+  const std::string filePath = "./tests/testdatabasealt.json";
 
   auto fileExists = [](const std::string &path) {
     return std::ifstream(path).is_open();
+  };
+
+  auto readFileContents = [](const std::string &path) {
+    // Not a robust way to do this, but here it doesn't matter so much, if it
+    // goes wrong we'll fail the test anyway…
+    std::stringstream ss{std::stringstream::out};
+    ss << std::ifstream(path).rdbuf();
+    return ss.str();
   };
 
   auto writeFileContents = [](const std::string &path,
@@ -61,53 +49,71 @@ SCENARIO("The database and action program arguments can be parsed correctly "
     f << contents;
   };
 
-  GIVEN("a valid path to a reset database JSON file") {
+  GIVEN("a valid path to an empty database JSON file") {
 
     // Reset the file...
     REQUIRE(fileExists(filePath));
-    REQUIRE_NOTHROW(writeFileContents(
-        filePath, "{\"Bank Accounts\":{\"Starling\":{\"Account "
-                  "Number\":\"12345678\",\"Name\":\"Mr John Doe\",\"Sort "
-                  "Code\":\"12-34-56\"}},\"Websites\":{\"Facebook\":{"
-                  "\"password\":\"pass1234fb\",\"url\":\"https://"
-                  "www.facebook.com/"
-                  "\",\"username\":\"example@gmail.com\"},\"Google\":{"
-                  "\"password\":\"pass1234\",\"url\":\"https://www.google.com/"
-                  "\",\"username\":\"example@gmail.com\"},\"Twitter\":{"
-                  "\"password\":\"r43rfsffdsfdsf\",\"url\":\"https://"
-                  "www.twitter.com/\",\"username\":\"example@gmail.com\"}}}"));
+    REQUIRE_NOTHROW(writeFileContents(filePath, "{}"));
 
-    WHEN("the db program argument is '" + filePath +
-         "' and the action program argument is 'read'") {
+    WHEN("a new empty Wallet object is constructed") {
 
-      Argv argvObj({"test", "--db", filePath.c_str(), "--action", "read"});
-      auto **argv = argvObj.argv();
-      auto argc = argvObj.argc();
+      Wallet w{};
+      REQUIRE(w.empty());
 
-      std::stringstream buffer;
-      CoutRedirect originalBuffer{buffer.rdbuf()};
+      const std::string ident1 = "ident1";
+      const std::string ident2 = "ident2";
 
-      THEN("the expected JSON output is printed to stdout") {
+      const std::string key1 = "key1";
+      const std::string key2 = "key2";
 
-        REQUIRE_NOTHROW(App::run(argc, argv));
+      const std::string value1 = "value1";
+      const std::string value2 = "value2";
 
-        std::string output = buffer.str();
+      AND_WHEN("the Wallet object is populated with dummy data") {
 
-        REQUIRE(
-            output.find(
-                "{\"Bank Accounts\":{\"Starling\":{\"Account "
-                "Number\":\"12345678\",\"Name\":\"Mr John Doe\",\"Sort "
-                "Code\":\"12-34-56\"}},\"Websites\":{\"Facebook\":{"
-                "\"password\":\"pass1234fb\",\"url\":\"https://"
-                "www.facebook.com/"
-                "\",\"username\":\"example@gmail.com\"},\"Google\":{"
-                "\"password\":\"pass1234\",\"url\":\"https://www.google.com/"
-                "\",\"username\":\"example@gmail.com\"},\"Twitter\":{"
-                "\"password\":\"r43rfsffdsfdsf\",\"url\":\"https://"
-                "www.twitter.com/\",\"username\":\"example@gmail.com\"}}}") ==
-            0);
+        Item iObj1{ident1};
+        Item iObj2{ident2};
 
-      } // THEN
+        iObj1.addEntry(key1, value1);
+        iObj1.addEntry(key2, value2);
+        iObj2.addEntry(key1, value1);
+
+        REQUIRE(iObj1.size() == 2);
+        REQUIRE(iObj2.size() == 1);
+
+        Category cObj1{ident1};
+        Category cObj2{ident2};
+
+        cObj1.addItem(iObj1);
+        cObj1.addItem(iObj2);
+        cObj2.addItem(iObj1);
+
+        REQUIRE(cObj1.size() == 2);
+        REQUIRE(cObj2.size() == 1);
+
+        w.addCategory(cObj1);
+        w.addCategory(cObj2);
+
+        REQUIRE(w.size() == 2);
+
+        THEN("the saving to file will not throw an exception") {
+
+          REQUIRE_NOTHROW(w.save(filePath));
+
+          AND_THEN("the file contents will be correct") {
+
+            REQUIRE(
+                readFileContents(filePath).find(
+                    "{\"ident1\":{\"ident1\":{\"key1\":\"value1\",\"key2\":"
+                    "\"value2\"},\"ident2\":{\"key1\":\"value1\"}},\"ident2\":{"
+                    "\"ident1\":{\"key1\":\"value1\",\"key2\":\"value2\"}}}") ==
+                0);
+
+          } // AND_THEN
+
+        } // THEN
+
+      } // AND_WHEN
 
     } // WHEN
 
