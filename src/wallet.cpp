@@ -239,7 +239,7 @@ bool Wallet::save(const std::string &filePath) const {
 
   // Open the file
   try {
-    fileStream.open(filePath, std::ifstream::out);
+    fileStream.open(filePath, std::ofstream::out);
   } catch (const std::runtime_error &ex) {
     throw FileIOError(FileIOError::WRITE, filePath);
   }

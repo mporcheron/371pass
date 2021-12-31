@@ -13,4 +13,4 @@ add_executable(371pass
         src/371pass.cpp
         src/wallet.cpp
         bin/catch.o
-        tests/test3.cpp)
+        tests/test6.cpp)
