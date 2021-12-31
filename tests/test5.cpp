@@ -32,9 +32,29 @@ SCENARIO("A Wallet object can load a JSON file", "[wallet]") {
     return std::ifstream(path).is_open();
   };
 
-  GIVEN("a valid path to a database JSON file") {
+  auto writeFileContents = [](const std::string &path,
+                              const std::string &contents) {
+    // Not a robust way to do this, but here it doesn't matter so much, if it
+    // goes wrong we'll fail the test anyway…
+    std::ofstream f{path};
+    f << contents;
+  };
 
+  GIVEN("a valid path to a reset database JSON file") {
+
+    // Reset the file...
     REQUIRE(fileExists(filePath));
+    REQUIRE_NOTHROW(writeFileContents(
+        filePath, "{\"Bank Accounts\":{\"Starling\":{\"Account "
+                  "Number\":\"12345678\",\"Name\":\"Mr John Doe\",\"Sort "
+                  "Code\":\"12-34-56\"}},\"Websites\":{\"Facebook\":{"
+                  "\"password\":\"pass1234fb\",\"url\":\"https://"
+                  "www.facebook.com/"
+                  "\",\"username\":\"example@gmail.com\"},\"Google\":{"
+                  "\"password\":\"pass1234\",\"url\":\"https://www.google.com/"
+                  "\",\"username\":\"example@gmail.com\"},\"Twitter\":{"
+                  "\"password\":\"r43rfsffdsfdsf\",\"url\":\"https://"
+                  "www.twitter.com/\",\"username\":\"example@gmail.com\"}}}"));
 
     WHEN("a new empty Wallet object is constructed") {
 

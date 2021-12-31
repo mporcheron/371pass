@@ -19,7 +19,7 @@
 #include "test4.cpp"
 #include "test5.cpp"
 #include "test6.cpp"
-//#include "test7.cpp"
+#include "test7.cpp"
 //#include "test8.cpp"
 //#include "test9.cpp"
 //#include "test10.cpp"

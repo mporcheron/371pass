@@ -10,7 +10,10 @@
 // Catch2 — https://github.com/catchorg/Catch2
 // Catch2 is licensed under the BOOST license
 // -----------------------------------------------------
-// This file tests 371pass output for the read argument.
+// This file tests 371pass output for the database
+// argument and 'read' value of the action argument.
+// This test works by capturing the stdout of your
+// program.
 // -----------------------------------------------------
 
 #include "../src/lib_catch.hpp"
@@ -34,12 +37,15 @@ private:
 
 public:
   CoutRedirect(std::streambuf *new_buffer)
-      : old(std::cout.rdbuf(new_buffer)) { /* do nothing */ }
+      : old(std::cout.rdbuf(new_buffer)) { /* do nothing */
+  }
 
   ~CoutRedirect() { std::cout.rdbuf(old); }
 };
 
-SCENARIO("The database and action program argument can be parsed correctly such that a file can be opened, read, parsed, and output to stdout", "[args]") {
+SCENARIO("The database and action program arguments can be parsed correctly "
+         "such that a file can be opened, read, parsed, and output to stdout",
+         "[args]") {
 
   const std::string filePath = "./tests/testdatabase.json";
 
@@ -47,11 +53,32 @@ SCENARIO("The database and action program argument can be parsed correctly such 
     return std::ifstream(path).is_open();
   };
 
-  GIVEN("a valid path to a database JSON file") {
+  auto writeFileContents = [](const std::string &path,
+                              const std::string &contents) {
+    // Not a robust way to do this, but here it doesn't matter so much, if it
+    // goes wrong we'll fail the test anyway…
+    std::ofstream f{path};
+    f << contents;
+  };
 
+  GIVEN("a valid path to a reset database JSON file") {
+
+    // Reset the file...
     REQUIRE(fileExists(filePath));
+    REQUIRE_NOTHROW(writeFileContents(
+        filePath, "{\"Bank Accounts\":{\"Starling\":{\"Account "
+                  "Number\":\"12345678\",\"Name\":\"Mr John Doe\",\"Sort "
+                  "Code\":\"12-34-56\"}},\"Websites\":{\"Facebook\":{"
+                  "\"password\":\"pass1234fb\",\"url\":\"https://"
+                  "www.facebook.com/"
+                  "\",\"username\":\"example@gmail.com\"},\"Google\":{"
+                  "\"password\":\"pass1234\",\"url\":\"https://www.google.com/"
+                  "\",\"username\":\"example@gmail.com\"},\"Twitter\":{"
+                  "\"password\":\"r43rfsffdsfdsf\",\"url\":\"https://"
+                  "www.twitter.com/\",\"username\":\"example@gmail.com\"}}}"));
 
-    WHEN("the db argument is '" + filePath + "' and the action program argument is 'read'") {
+    WHEN("the db program argument is '" + filePath +
+         "' and the action program argument is 'read'") {
 
       Argv argvObj({"test", "--db", filePath.c_str(), "--action", "read"});
       auto **argv = argvObj.argv();
@@ -66,7 +93,19 @@ SCENARIO("The database and action program argument can be parsed correctly such 
 
         std::string output = buffer.str();
 
-        REQUIRE(output.find("{\"Bank Accounts\":{\"Starling\":{\"Account Number\":\"12345678\",\"Name\":\"Mr John Doe\",\"Sort Code\":\"12-34-56\"}},\"Websites\":{\"Facebook\":{\"password\":\"pass1234fb\",\"url\":\"https://www.facebook.com/\",\"username\":\"example@gmail.com\"},\"Google\":{\"password\":\"pass1234\",\"url\":\"https://www.google.com/\",\"username\":\"example@gmail.com\"},\"Twitter\":{\"password\":\"r43rfsffdsfdsf\",\"url\":\"https://www.twitter.com/\",\"username\":\"example@gmail.com\"}}}") == 0);
+        REQUIRE(
+            output.find(
+                "{\"Bank Accounts\":{\"Starling\":{\"Account "
+                "Number\":\"12345678\",\"Name\":\"Mr John Doe\",\"Sort "
+                "Code\":\"12-34-56\"}},\"Websites\":{\"Facebook\":{"
+                "\"password\":\"pass1234fb\",\"url\":\"https://"
+                "www.facebook.com/"
+                "\",\"username\":\"example@gmail.com\"},\"Google\":{"
+                "\"password\":\"pass1234\",\"url\":\"https://www.google.com/"
+                "\",\"username\":\"example@gmail.com\"},\"Twitter\":{"
+                "\"password\":\"r43rfsffdsfdsf\",\"url\":\"https://"
+                "www.twitter.com/\",\"username\":\"example@gmail.com\"}}}") ==
+            0);
 
       } // THEN
 
