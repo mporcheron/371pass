@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(371pass)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 include_directories(src)
 
@@ -12,5 +12,4 @@ add_executable(371pass
         src/item.cpp
         src/371pass.cpp
         src/wallet.cpp
-        bin/catch.o
-        tests/testus7.cpp)
+        src/main.cpp)

@@ -44,7 +44,7 @@ public:
 
   unsigned int inline empty() const noexcept { return entries.empty(); }
 
-  bool addEntry(const std::string &key, std::string value) noexcept;
+  bool addEntry(std::string key, std::string value) noexcept;
   const std::string &getEntry(const std::string &key) const;
   bool deleteEntry(const std::string &key);
 

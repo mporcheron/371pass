@@ -14,15 +14,15 @@
 // function in Wallet objects.
 // -----------------------------------------------------
 
-#include "../src/lib_catch.hpp"
+#include "lib_catch.hpp"
 
 #include <string>
 
-#include "../src/lib_cxxopts.hpp"
-#include "../src/lib_cxxopts_argv.hpp"
+#include "lib_cxxopts.hpp"
+#include "lib_cxxopts_argv.hpp"
 
-#include "../src/wallet.h"
-#include "../src/category.h"
+#include "wallet.h"
+#include "category.h"
 
 SCENARIO("An empty Category can be constructed successfully in an empty Wallet",
          "[wallet][extended]") {

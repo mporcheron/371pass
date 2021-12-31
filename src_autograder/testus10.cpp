@@ -14,18 +14,18 @@
 // do not return null for empty objects.
 // -----------------------------------------------------
 
-#include "../src/lib_catch.hpp"
+#include "lib_catch.hpp"
 
 #include <fstream>
 #include <iostream>
 #include <string>
 
-#include "../src/lib_cxxopts.hpp"
-#include "../src/lib_cxxopts_argv.hpp"
+#include "lib_cxxopts.hpp"
+#include "lib_cxxopts_argv.hpp"
 
-#include "../src/wallet.h"
-#include "../src/category.h"
-#include "../src/item.h"
+#include "wallet.h"
+#include "category.h"
+#include "item.h"
 
 SCENARIO("When converted to JSON, an empty Wallet will be represented as {}",
          "[wallet][extended]") {

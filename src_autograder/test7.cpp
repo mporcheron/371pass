@@ -16,16 +16,16 @@
 // program.
 // -----------------------------------------------------
 
-#include "../src/lib_catch.hpp"
+#include "lib_catch.hpp"
 
 #include <fstream>
 #include <iostream>
 #include <string>
 
-#include "../src/lib_cxxopts.hpp"
-#include "../src/lib_cxxopts_argv.hpp"
+#include "lib_cxxopts.hpp"
+#include "lib_cxxopts_argv.hpp"
 
-#include "../src/371pass.h"
+#include "371pass.h"
 
 // Redirect std::cout to a buffer
 // by Björn Pollex

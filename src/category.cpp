@@ -50,13 +50,13 @@ Item &Category::newItem(const std::string &iIdent) {
 
   if (result == items.end()) {
     Item i(iIdent);
-    const auto &[newResult, success] = items.insert(std::pair{iIdent, i});
+    const auto &insertResult = items.insert({iIdent, i});
 
-    if (!success) {
+    if (!insertResult.second) {
       throw AddItemError(iIdent);
     }
 
-    return newResult->second;
+    return insertResult.first->second;
   }
 
   return result->second;
@@ -77,8 +77,8 @@ bool Category::addItem(Item item) {
 
     if (result == items.end()) {
       const std::string &iIdent = item.getIdent();
-      const auto [newResult, success] = items.insert(std::pair{iIdent, item});
-      return success;
+      const auto &insertResult = items.insert({iIdent, item});
+      return insertResult.second;
     }
 
     Item &existingItem = result->second;

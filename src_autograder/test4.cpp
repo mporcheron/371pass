@@ -14,14 +14,14 @@
 // Category objects in the Wallet container.
 // -----------------------------------------------------
 
-#include "../src/lib_catch.hpp"
+#include "lib_catch.hpp"
 
 #include <string>
 
-#include "../src/lib_cxxopts.hpp"
-#include "../src/lib_cxxopts_argv.hpp"
+#include "lib_cxxopts.hpp"
+#include "lib_cxxopts_argv.hpp"
 
-#include "../src/wallet.h"
+#include "wallet.h"
 
 SCENARIO("An empty Wallet can be constructed successfully", "[wallet]") {
 

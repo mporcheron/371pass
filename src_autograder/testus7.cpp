@@ -18,16 +18,16 @@
 // check the category/item/entry exists.
 // -----------------------------------------------------
 
-#include "../src/lib_catch.hpp"
+#include "lib_catch.hpp"
 
 #include <fstream>
 #include <iostream>
 #include <string>
 
-#include "../src/lib_cxxopts.hpp"
-#include "../src/lib_cxxopts_argv.hpp"
+#include "lib_cxxopts.hpp"
+#include "lib_cxxopts_argv.hpp"
 
-#include "../src/371pass.h"
+#include "371pass.h"
 
 SCENARIO("The database and action program arguments can be parsed correctly "
          "such that a file can be opened, read, parsed, data updated, and "

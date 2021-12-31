@@ -10,22 +10,22 @@
 // Catch2 — https://github.com/catchorg/Catch2
 // Catch2 is licensed under the BOOST license
 // -----------------------------------------------------
-// This file tests 371pass for updating an entry, Item
+// This file tests 371pass for creating an entry, Item
 // and Category all in one go.
 // -----------------------------------------------------
 
-#include "../src/lib_catch.hpp"
+#include "lib_catch.hpp"
 
 #include <fstream>
 #include <iostream>
 #include <string>
 
-#include "../src/lib_cxxopts.hpp"
-#include "../src/lib_cxxopts_argv.hpp"
+#include "lib_cxxopts.hpp"
+#include "lib_cxxopts_argv.hpp"
 
-#include "../src/371pass.h"
+#include "371pass.h"
 
-SCENARIO("An entry, Item, and Category can be updated all in one go.",
+SCENARIO("An entry, Item, and Category can be created all in one go.",
          "[args][extended]") {
 
   const std::string filePath = "./testdatabasealt.json";
@@ -46,28 +46,16 @@ SCENARIO("An entry, Item, and Category can be updated all in one go.",
 
     // Reset the file...
     REQUIRE(fileExists(filePath));
-    REQUIRE_NOTHROW(
-        writeFileContents(filePath, "{\"TestCategory\":{\"TestItem\":{"
-                                    "\"TestEntryKey\":\"TestEntryValue\"}}}"));
+    REQUIRE_NOTHROW(writeFileContents(filePath, "{}"));
 
-    const std::string testCategoryOld = "TestCategory";
-    const std::string testItemOld = "TestItem";
-    const std::string testEntryKeyOld = "TestEntryKey";
-    const std::string testEntryValueOld = "TestEntryValue";
-
-    const std::string testCategoryNew = "TestCategoryNew";
-    const std::string testItemNew = "TestItemNew";
-    const std::string testEntryKeyNew = "TestEntryKeyNew";
-    const std::string testEntryValueNew = "TestEntryValueNew";
-
-    const std::string testCategory = testCategoryOld + ":" + testCategoryNew;
-    const std::string testItem = testItemOld + ":" + testItemNew;
-    const std::string testEntryKey = testEntryKeyOld + ":" + testEntryKeyNew;
-    const std::string testEntryValue = testEntryValueNew;
+    const std::string testCategory = "TestCategory";
+    const std::string testItem = "TestItem";
+    const std::string testEntryKey = "TestEntryKey";
+    const std::string testEntryValue = "TestEntryValue";
     const std::string testEntry = testEntryKey + "," + testEntryValue;
 
     WHEN("the db program argument is '" + filePath +
-         "', the action program argument is 'update'") {
+         "', the action program argument is 'create'") {
 
       AND_WHEN("and the category program argument is '" + testCategory + "'") {
 
@@ -80,7 +68,7 @@ SCENARIO("An entry, Item, and Category can be updated all in one go.",
                 "--db",
                 filePath.c_str(),
                 "--action",
-                "update",
+                "create",
                 "--category",
                 testCategory.c_str(),
                 "--item",
@@ -95,25 +83,26 @@ SCENARIO("An entry, Item, and Category can be updated all in one go.",
 
               REQUIRE_NOTHROW(App::run(argc, argv));
 
-              AND_WHEN("loading the saved file into a new Wallet object") {
+              AND_WHEN("loading the saved file into a new Wallet "
+                       "object") {
 
                 Wallet wObj1{};
                 REQUIRE(wObj1.empty());
                 REQUIRE_NOTHROW(wObj1.load(filePath));
 
-                THEN("the new Wallet will contain the Category and Item "
-                     "objects with the updated entry key and value") {
+                THEN("the new Wallet will contain the Category and "
+                     "Item objects and entry") {
 
-                  REQUIRE_NOTHROW(wObj1.getCategory(testCategoryNew));
-                  REQUIRE(wObj1.getCategory(testCategoryNew).size() == 1);
+                  REQUIRE_NOTHROW(wObj1.getCategory(testCategory));
+                  REQUIRE(wObj1.getCategory(testCategory).size() == 1);
                   REQUIRE_NOTHROW(
-                      wObj1.getCategory(testCategoryNew).getItem(testItemNew));
-                  REQUIRE(wObj1.getCategory(testCategoryNew)
-                              .getItem(testItemNew)
+                      wObj1.getCategory(testCategory).getItem(testItem));
+                  REQUIRE(wObj1.getCategory(testCategory)
+                              .getItem(testItem)
                               .size() == 1);
-                  REQUIRE(wObj1.getCategory(testCategoryNew)
-                              .getItem(testItemNew)
-                              .getEntry(testEntryKeyNew) == testEntryValueNew);
+                  REQUIRE(wObj1.getCategory(testCategory)
+                              .getItem(testItem)
+                              .getEntry(testEntryKey) == testEntryValue);
 
                 } // THEN
 

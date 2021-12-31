@@ -53,13 +53,13 @@ Category &Wallet::newCategory(const std::string &cIdent) {
 
   if (result == categories.end()) {
     Category c(cIdent);
-    const auto [newResult, success] = categories.insert(std::pair{cIdent, c});
+    const auto &insertResult = categories.insert({cIdent, c});
 
-    if (!success) {
+    if (!insertResult.second) {
       throw AddCategoryError(cIdent);
     }
 
-    return newResult->second;
+    return insertResult.first->second;
   }
 
   return result->second;
@@ -81,9 +81,9 @@ bool Wallet::addCategory(Category category) {
 
     if (result == categories.end()) {
       const std::string &ident = category.getIdent();
-      const auto [newResult, success] =
-          categories.insert(std::pair{ident, category});
-      return success;
+      const auto &insertResult =
+          categories.insert({ident, category});
+      return insertResult.second;
     }
 
     Category &existingCategory = result->second;

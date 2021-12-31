@@ -14,15 +14,15 @@
 // for the Item, Category and Wallet objects.
 // -----------------------------------------------------
 
-#include "../src/lib_catch.hpp"
+#include "lib_catch.hpp"
 
 #include <string>
 
-#include "../src/lib_cxxopts.hpp"
+#include "lib_cxxopts.hpp"
 
-#include "../src/category.h"
-#include "../src/item.h"
-#include "../src/wallet.h"
+#include "category.h"
+#include "item.h"
+#include "wallet.h"
 
 SCENARIO("The == operator on Item evaluates its contents correctly",
          "[item][extended]") {

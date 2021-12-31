@@ -44,8 +44,15 @@ Item::Item(std::string ident) : ident(std::move(ident)), entries() {
 // Example:
 //  Item iObj{"identIdent"};
 //  iObj.addEntry("key", "value");
-bool Item::addEntry(const std::string &key, std::string value) noexcept {
-  return entries.insert_or_assign(key, std::move(value)).second;
+bool Item::addEntry(std::string key, std::string value) noexcept {
+  try {
+    getEntry(key);
+    entries[std::move(key)] = std::move(value);
+    return false;
+ } catch(const NoEntryError &ex) {
+   entries.insert({std::move(key), std::move(value)});
+   return true;
+ }
 }
 
 // TODO Write a function, getEntry, that takes one parameter, an entry

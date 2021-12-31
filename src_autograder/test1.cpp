@@ -10,33 +10,32 @@
 // Catch2 — https://github.com/catchorg/Catch2
 // Catch2 is licensed under the BOOST license
 // -----------------------------------------------------
-// This file contains tests case insensitivity for the
-// action program argument.
+// This file contains tests for the action program
+// argument.
 // -----------------------------------------------------
 
-#include "../src/lib_catch.hpp"
+#include "lib_catch.hpp"
 
 #include <string>
 
-#include "../src/lib_cxxopts.hpp"
-#include "../src/lib_cxxopts_argv.hpp"
+#include "lib_cxxopts.hpp"
+#include "lib_cxxopts_argv.hpp"
 
-#include "../src/371pass.h"
+#include "371pass.h"
 
-SCENARIO(
-    "the action program argument can be parsed case insensitively correctly",
-    "[args][extended]") {
+SCENARIO("The action program argument can be parsed correctly", "[args]") {
 
   GIVEN("a --action program argument and value") {
 
-    WHEN("the value is invalid ('invalid')") {
+    WHEN("the value of the action argument is not an expected action "
+         "('invalid')") {
 
-      Argv argv({"test", "--action", "invalid"});
-      auto **actual_argv = argv.argv();
-      auto argc = argv.argc();
+      Argv argvObj({"test", "--action", "invalid"});
+      auto **argv = argvObj.argv();
+      auto argc = argvObj.argc();
 
       auto cxxopts = App::cxxoptsSetup();
-      auto args = cxxopts.parse(argc, actual_argv);
+      auto args = cxxopts.parse(argc, argv);
 
       const std::string exceptionMessage = "action";
 
@@ -51,14 +50,14 @@ SCENARIO(
 
     } // WHEN
 
-    WHEN("the value is a create ('CrEaTe') and Action::CREATE is returned") {
+    WHEN("the value of the program argument is 'create'") {
 
-      Argv argv({"test", "--action", "CrEaTe"});
-      auto **actual_argv = argv.argv();
-      auto argc = argv.argc();
+      Argv argvObj({"test", "--action", "create"});
+      auto **argv = argvObj.argv();
+      auto argc = argvObj.argc();
 
       auto cxxopts = App::cxxoptsSetup();
-      auto args = cxxopts.parse(argc, actual_argv);
+      auto args = cxxopts.parse(argc, argv);
 
       THEN("the argument value is parsed without exception") {
 
@@ -74,14 +73,14 @@ SCENARIO(
 
     } // WHEN
 
-    WHEN("the value is a create ('READ') and Action::READ is returned") {
+    WHEN("the value of the program argument is 'read'") {
 
-      Argv argv({"test", "--action", "READ"});
-      auto **actual_argv = argv.argv();
-      auto argc = argv.argc();
+      Argv argvObj({"test", "--action", "read"});
+      auto **argv = argvObj.argv();
+      auto argc = argvObj.argc();
 
       auto cxxopts = App::cxxoptsSetup();
-      auto args = cxxopts.parse(argc, actual_argv);
+      auto args = cxxopts.parse(argc, argv);
 
       THEN("the argument value is parsed without exception") {
 
@@ -97,14 +96,14 @@ SCENARIO(
 
     } // WHEN
 
-    WHEN("the value is a create ('UPDate') and Action::UPDATE is returned") {
+    WHEN("the value of the program argument is 'update'") {
 
-      Argv argv({"test", "--action", "UPDate"});
-      auto **actual_argv = argv.argv();
-      auto argc = argv.argc();
+      Argv argvObj({"test", "--action", "update"});
+      auto **argv = argvObj.argv();
+      auto argc = argvObj.argc();
 
       auto cxxopts = App::cxxoptsSetup();
-      auto args = cxxopts.parse(argc, actual_argv);
+      auto args = cxxopts.parse(argc, argv);
 
       THEN("the argument value is parsed without exception") {
 
@@ -120,7 +119,7 @@ SCENARIO(
 
     } // WHEN
 
-    WHEN("the value is a create ('delete') and Action::DELETE is returned") {
+    WHEN("the value of the program argument is a 'delete'") {
 
       Argv argvObj({"test", "--action", "delete"});
       auto **argv = argvObj.argv();
