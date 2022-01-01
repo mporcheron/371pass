@@ -1,0 +1,552 @@
+% !TEX TS-program = xelatex
+% !TEX encoding = UTF-8 Unicode
+
+
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{fontspec}
+\usepackage[UKenglish]{datetime}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{xparse}
+\usepackage{scrextend}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+
+
+\setmainfont{SF Pro Text}
+\setsansfont{SF Pro Text}
+\setmonofont{SF Mono}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+}
+\urlstyle{same}
+
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    commentstyle=\color{olive}\ttfamily,
+    morecomment=[l][\color{magenta}]{\#}
+}
+
+\setlist[description]{leftmargin=\parindent,labelindent=\parindent}
+
+\pagestyle{fancy}
+\fancyhead[L]{CSC371 21/22: Summative Coursework}
+\fancyhead[R]{Dr Martin Porcheron}
+\fancyfoot[C]{\thepage}
+
+\fancypagestyle{plain}{
+\fancyhf{}
+\fancyhead[L]{CSC371 Advanced OOP 21/22}
+\fancyfoot[C]{\thepage}
+}
+
+\newcommand\qimarks[1]{\textbf{[#1 \ifthenelse{\equal{#1}{\string 1}}{mark}{marks}]}}
+\newcommand\qmarks[1]{{\par\vspace{.3cm}\rightline{\qimarks{#1}\vspace{.5cm}}}}
+
+\nonfrenchspacing
+
+\title{Summative Coursework: 371pass}
+\author{Dr Martin Porcheron}
+\date{}
+\newcommand\autograderlink{\href{https://csautograder.swansea.ac.uk/}{CS Autograder}}
+\newcommand\submissionlink{\href{https://csautograder.swansea.ac.uk/web/project/31}{the CS Autograder submission page}}
+\newcommand\mysubmissionsurl{https://csautograder.swansea.ac.uk/web/project/31?current_tab=my_submissions}
+\newcommand\totalmarks{{100} }
+
+% \hyphenpenalty 10000
+% \exhyphenpenalty 10000
+
+
+\begin{document}
+
+\maketitle
+
+
+You must submit your coursework by the due date listed on Canvas and CS Autograder at \textbf{11:59pm} to \textbf{\submissionlink{}} (not Canvas!). Feedback for your final submission will be provided by email to you university email address.
+
+You can submit to Autograder a maximum of 10 times per day. Note that the results from Autograder may take a while to generate, especially if there are many simultaneous submissions, thus you are strongly discouraged from making last‑minute changes and submissions just before the deadline. We will only take the last submission to Autograder, thus if you submit close to the deadline, your results may come after the deadline and may be lower if you broke something!
+
+\textbf{Please test that Autograder works for you now} by uploading the coursework framework. Some users occasionally encounter system errors with Autograder that seem to be caused by cookies. If this happens to you, try logging into Autograder in a private browsing/incognito window.
+
+This coursework is worth 100 marks, and equates to 20\% of your module grade.
+
+Please read this entire document through from start to finish before beginning to work on this assignment and before asking questions about the coursework. If anything is ambiguous or unclear, then you should seek clarification by posting in the \href{https://canvas.swansea.ac.uk/courses/24793/discussion_topics/217912}{Canvas group discussions for the coursework}.
+
+
+
+
+
+\section*{Unfair Practice Declaration}\label{sec:unfair-practice}
+The university takes all cases of unfair practice seriously. The code you produce for this assignment \textbf{must be your own original work}. Do not submit any code copied from your peers, from the Internet, or from anyone else, as your own. Likewise, \textbf{do not share your code} with anyone, including sharing or posting \textbf{any portion} of it publicly or even in a private communication. Even if you do not intend for it to be copied by another student, this counts as \emph{collusion} and is an academic misconduct offence.
+
+\textbf{Reading} from documentation, tutorials, books, and online forums is acceptable, but copying code and passing this off as your own is an academic misconduct offence.
+
+By submitting this coursework, you state that you fully understand and are complying with the University’s policy on Academic Integrity and Academic Misconduct. The policy can be found at: \url{https://myuni.swansea.ac.uk/academic-life/academic-misconduct}.
+
+
+\section*{Changelog}\label{sec:changelog}
+\begin{description}
+    \item[v1.0 --- 28th Feb 2022] Coursework released
+\end{description}
+
+
+
+\newpage\section*{About this coursework}\label{sec:about}
+As a software engineer you will often find yourself working within a team of developers, following a specification of what is being collectively built is designed via steering committee decisions or senior design architects, potentially in collaboration with clients. 
+
+\subsection*{Learning objectives}
+This coursework is designed to simulate the sorts of things you may face in an industry job. Namely, you may have to complete code, using someone else’s code as a starter. Unfortunately, decisions about how your program should work may well be made for you already. Someone else may have also selected which external libraries you can and cannot use (often corporations have sets of preferred tools). These are all realistic challenges that should not be overlooked. It can be challenging to code using someone else’s framework, and using third party libraries will require you to read documentation and even experiment with different ideas to figure out how to use them correctly. Through completing this coursework, you should develop an appreciation of how coding in industry is likely to unfold.
+
+This coursework requires you to code according to a specification laid out in documentation and Behaviour Driven Development style (BDD) test suites. In this coursework, test suites are implemented using the \href{https://github.com/catchorg/Catch2}{Catch2 unit testing framework}. When a test suite is compiled and executed it is a rich test application that provides a great deal of automated test information about how your code is executing and where it is not adhering to the specification. As such, you will be expected to learn how to write code in C++ according to unit tests.
+
+
+
+\subsection*{The Task: 371pass}
+You will be implementing a simple application to store and manage personal data such as passwords, logins to websites, bank accounts, and credit cards. For this coursework, you will implement some basic functionality in C++ for your program to work over the command line. Your data will be saved to a single JSON file, which your program should also be able to read from.
+
+
+\subsection*{Directory structure}\label{sec:cwk dir}
+
+%You have been provided with the below directory structure. This includes starter code and documentation for the files you need to develop.
+
+
+
+\begin{labeling}{\texttt{{\color{blue} \^{}}src/measure.[cpp|h] }}
+    \item[{\color{red} *}\texttt{LICENCE}]
+
+    Licences for the framework and libraries included
+
+    \item[\texttt{README.md}]
+
+    A \href{https://commonmark.org}{Markdown} file you can use to document your solution
+
+    \item[\texttt{bin/}]
+
+    Directory where compiled binaries are stored by default
+
+    \item[\texttt{build.bat}]
+
+    A Windows Batch file for compiling both 371pass and the test suite
+
+    \item[\texttt{build.sh}]
+
+    A Bash script for compiling both 371pass and the test suite
+
+    \item[{\color{blue} \^{}}\texttt{database.json}]
+
+    A sample database you can use during development
+
+    \item[{\color{blue} \^{}}\texttt{src/371pass.[cpp|h]}]
+
+    Files that contain your main program logic
+
+    \item[{\color{blue} \^{}}\texttt{src/category.[cpp|h]}]
+
+    The \texttt{Category} class, for storing \texttt{Item} objects
+    
+    \item[{\color{blue} \^{}}\texttt{src/item.[cpp|h]}]
+
+    The \texttt{Item} class, for storing entries as key/pair values
+
+    \item[{\color{red} *}\texttt{src/lib\_*.[cpp|hpp]}]
+
+    The only permitted external libraries
+    
+    \item[{\color{blue} \^{}}\texttt{src/wallet.[cpp|h]}]
+
+    The \texttt{Wallet} class, for storing \texttt{Category} objects
+
+    \item[{\color{red} *}\texttt{src/main.cpp}]
+
+    A simple file that calls the bootstrap code in \emph{371pass.cpp}
+
+    \item[\texttt{tests/}]
+
+    Directory containing a number of Catch2 BDD unit tests and JSON files used in the tests
+\end{labeling}
+
+\vspace{.5cm}
+You must not modify any file/directories with an asterisk (\textbf{\color{red} *}). You only \emph{need} to modify the files with a circumflex (\textbf{\color{blue} \^{}}). Please do not create an additional files as our test scripts will miss these.
+
+
+\subsection*{Automated build script and test suite}\label{sec:cwk scripts}
+
+\emph{build.sh} and \emph{build.bat} will compile your application from the command line on your local machine. The former works with POSIX OSs, i.e., Unix (including macOS) and GNU/Linux (including virtualised installations such as those through Windows Subsystem for Linux). The latter script works with Windows Command Prompt. Both scripts build to C++14 standards and place the compiled binary in the \emph{bin/} directory as \emph{bethyw(.exe)}. You can alternatively use your own toolchain for compilation if you wish, however we will be testing your coursework with GCC on a POSIX system.
+
+\subsubsection*{Testing your code locally}
+You have been provided with a suite of test programs \emph{tests/test1.cpp}, \emph{tests/test2.cpp}, ..., \emph{tests/test9.cpp}. You can compile your program with one of these test suites by calling the build script with a single argument \texttt{testN} where \emph{\texttt{N}} is the number of the test you wish to compile (i.e., \texttt{./build.sh test1} will build your program with the test suite in \emph{tests/test1.cpp}). The compiled binary will be saved as \emph{371pass-test(.exe)} in the \emph{bin/} directory. Execute this binary to run the test. Compile your application with all tests with the command \texttt{./build.sh testall}. The same options also work for \emph{build.bat}. You can use your own IDE or build your compilation process (e.g., using make), but we cannot realistically provide support for this.
+
+Studying these files, along with the documentation in the provided source code and this PDF, should give you an insight into how your functions should be declared and implemented. The tests should cover most of the functions you need to write, but \textbf{they do not offer complete coverage}. You are welcome to write additional tests to aid in your development. Grading your code will be done by running your coursework against the original versions of these test programs plus some additional tests.
+
+Although you should generally get the same output with whichever compiler you use, your code will be tested using the GNU Compiler Collection 10.2.
+
+\subsubsection*{Testing your code on Autograder}
+The CS Autograder service, which is the main submission process for this module, uses GCC 10.2. You can submit your coursework up to 10 times a day up to the deadline. The service will compile and run your code against the provided the unit tests. You will be able to see the results of these tests, allowing you to refine your submission. Due to the number of students on this module, it may take a while for test results to be generated. I would strongly discourage you from submitting to Autograder close to the deadline as demand will be high, and your results may arrive after the deadline.
+
+
+
+\subsection*{Program arguments}\label{sec:cwk args}
+
+Your program must read in a series of command line arguments (not \texttt{stdin}!) and parse them. A library has been included that will handle and convert these values to \texttt{std::string} or \texttt{std::vector} objects inside \emph{bethyw.cpp}. You will have to write additional code in this file to fully implement the functionality described below. Note that some arguments will be redefined in \hyperref[sec:tasks extended-args]{a task} later.
+
+\begin{labeling}{\texttt{ -d arg or --datasets arg}}
+    \item[\texttt{--dir arg}]
+
+    The directory \texttt{arg} contains the datasets that will be used (default: \emph{datasets/}). This argument is optional (i.e., if the program is run without the argument supplied, the value \emph{datasets} is used).
+
+    \item[\texttt{-d arg} or \texttt{--datasets arg}]
+
+    The dataset(s) to import and analyse as a comma-separated list of codes. This argument is optional. If it not set, or it is set  and contains the value \texttt{all}, then all datasets should be imported. Possible values can be found in \emph{datasets.h} as the member variable \texttt{CODE} in the \texttt{InputFileSource} struct inside the \texttt{InputFiles} namespace.
+
+    \item[\texttt{-a arg} or \texttt{--areas arg}]
+
+    The areas(s) to import and analyse as a comma-separated list. Initially, \texttt{arg} should be implemented such that filtering is done using local authority codes, as found within the dataset files. This argument is optional. If it not set, or it is set  and contains the value \texttt{all}, then all areas should be imported.
+
+    \item[\texttt{-m arg} or \texttt{--measures arg}]
+
+    The measure(s) from the dataset(s) to import and analyse as a comma-separated list. Initially, \texttt{arg} should be implemented such that filtering is done using the codenames for measures, as found within the dataset files. This argument is optional. If it not set, or it is set and contains the value \texttt{all}, then all measures from all imported datasets should be imported.
+
+    \item[\texttt{-y arg} or \texttt{--years arg}]
+
+    The years(s) from the dataset(s) to import. \texttt{arg} can either be of the form \texttt{YYYY} (e.g. \texttt{2012} to import data for the year 2012) or \texttt{YYYY-ZZZZ} (e.g. \texttt{2012-2015} to import the 4 years from \texttt{2012} to \texttt{2015}). This argument is optional. If it not set, or it is set and contains the value \texttt{0} or \texttt{0-0}, then all years should be imported.
+
+    \item[\texttt{-j} or \texttt{--json}]
+
+    Output the data as JSON instead of tables (see \hyperref[sec:cwk output]{below}).
+\end{labeling}
+
+
+
+\subsection*{Included datasets}\label{sec:cwk datasets}
+
+A number of data files are stored in the \emph{datasets/} directory and are declared in \emph{datasets.h}. Do not replace or modify any of these files---your coursework will be marked with a fresh copy of them. 
+
+Read the code in \emph{datasets.h} that provides details about these files, comparing this code to the explanation below. This file contains code that is not a particularly efficient way of storing this information (i.e., with maps storing data on the heap). The intention here was to create a file that resembles what might have been generated by some form of runtime computation of available datasets (like a future version of the system might have). For ease in this coursework, I have provided it as statically-defined data so you can inspect all the relevant information in code.
+
+In \emph{datasets.h}, each \texttt{InputFileSource} instance in the \texttt{InputFiles} namespace includes: the program argument value for filtering the dataset (using \texttt{-d}/\texttt{--datasets}), a human-readable name for the dataset, a filename, a \texttt{SourceDataType} enum value (used by functions in \emph{areas.cpp}), and a map whose type is aliased as \texttt{SourceColumnMapping}, linking the enum \texttt{SourceColumn} (which includes a list of all possible relevant columns) to the string value of the column. Read the explanation of these \texttt{enum}s in this file before proceeding.
+
+\subsubsection*{\emph{areas.csv}}\label{sec:cwk datasets areas}
+A list of areas in Wales, mapping the local authority code to a name in English and a name in Welsh. It should be handled by specific code for parsing this authority code CSV, and has three columns, one for the authority code (\texttt{AUTH\_CODE}), one for the name in English (\texttt{AUTH\_NAME\_ENG}) and one for the name in Welsh (\texttt{AUTH\_NAME\_CYM}).
+
+This is a special dataset that should always be imported irrespective of the \texttt{-d}/\texttt{--datasets} argument (but the areas imported can still be filtered by the \texttt{-a}/\texttt{--areas} argument).
+
+\subsubsection*{\emph{popu1009.json}}\label{sec:cwk datasets popu1009}
+The StatsWales JSON file for \href{http://open.statswales.gov.wales/en-gb/dataset/popu1009}{population density by local authority}. This dataset file has the identifier \texttt{popden} (i.e. it should be included if the \texttt{-d}/\texttt{--datasets} argument is not supplied, contains \texttt{all}, or contains \texttt{popden}). It is given the human-readable name of ``Population density''. It is a JSON file that should be handled by our function for parsing StatsWales JSON files.  There are three measures in this file: \emph{Population} (codename: \texttt{pop}), \emph{Population Density} (codename: \texttt{dens}), and \emph{Land Area} (codename: \texttt{area}).
+
+StatsWales JSON files have three high-level key:value pairs, with the data we need stored in the value accessed by the key \texttt{value}. \texttt{value} itself is an array/list of rows in the dataset, organised as key:value pairs. There is much data here, but we only need the following pairs:
+
+\begin{itemize}
+    \item The value of \texttt{Localauthority\_Code} contains the local authority code, which is mapped to the \texttt{AUTH\_CODE} \texttt{enum} column heading in \emph{datasets.h}, and used in the \texttt{-a}/\texttt{--areas} program argument filter
+
+    \item The value of \texttt{Localauthority\_ItemName\_ENG} contains the the local authority name in English, which is mapped to the \texttt{AUTH\_NAME\_ENG} \texttt{enum} column heading in \emph{datasets.h}
+
+    \item The value of \texttt{Measure\_Code} contains an identifier for the measure, which is mapped to the \texttt{MEASURE\_CODE} \texttt{enum} column heading in \emph{datasets.h}, and used in the \texttt{-m}/\texttt{--measure} program argument filter
+
+    \item The value of \texttt{Measure\_ItemName\_ENG} contains the English name for the measure, which is mapped to the \texttt{MEASURE\_NAME} \texttt{enum} column heading in \emph{datasets.h}
+
+    \item The value of \texttt{Year\_Code} contains a year for a particular value, which is mapped to the \texttt{YEAR} \texttt{enum} column heading in \emph{datasets.h}, and used in the \texttt{-y}/\texttt{--years} program argument filter
+
+    \item The value of \texttt{VALUE} contains the value for the given local authority, measure, and year, and is mapped to the \texttt{VALUE} \texttt{enum} column heading in \emph{datasets.h}
+\end{itemize}
+
+Note that a bug on the StatsWales website truncates this JSON file and it misses many areas.
+
+
+\subsubsection*{\emph{econ0080.json}}\label{sec:cwk datasets econ0080}
+The StatsWales JSON file for \href{https://statswales.gov.wales/Catalogue/Business-Economy-and-Labour-Market/Businesses/Business-Demography/activebusinessenterprises-by-area-year}{active businesses by area and year}, which has the identifier \texttt{biz}. There are 8 different measures in this file: \emph{the number of active enterprises} (codename: \texttt{a}), \emph{the number of newly opened enterprises} (codename: \texttt{b}), \emph{the number of enterprises closing} (codename \texttt{d}), \emph{the number of active enterprises per 10,000 of the population aged 16 to 64} (codename: \texttt{pa}), \emph{the number of births per 10,000 of the population aged 16 to 64} (codename: \texttt{pb}), \emph{the number of deaths per 10,000 of the population aged 16 to 64} (codename: \texttt{pd}), \emph{the birth rate as a percentage of active enterprises} (codename: \texttt{rb}), and \emph{the death rate as a percentage of active enterprises} (codename: \texttt{rd}). The column headings are defined in the same way as \emph{popu1009.json} (see \emph{datasets.h}).
+
+
+\subsubsection*{\emph{envi0201.json}}\label{sec:cwk datasets envi0201}
+The StatsWales JSON file for \href{https://statswales.gov.wales/Catalogue/Environment-and-Countryside/Air-Quality/airqualityindicators-by-localauthority}{air quality indicators, by local authority}, which has the identifier \texttt{aqi}. There are three measures in this file: \emph{NO\textsubscript{2}} readings (codename: \texttt{no2}), \emph{PM10} readings (codename: \texttt{pm10}), and \emph{PM2.5} readings (codename: \texttt{pm2-5}). The column headings are defined in the same way as \emph{popu1009.json} (see \emph{datasets.h}). %Inconsistently, though, the StatsWales website outputs the data variable in the \texttt{VALUE} column as a string and not a numerical value. Therefore, you will need to make sure your code converts this value safely.
+
+%Note this JSON file includes additional areas compared with the previous datasets. You must correctly import all the data in the file, including the new local areas (dependant on the filtering options supplied via the program arguments).
+
+
+\subsubsection*{\emph{trans0152.json}}\label{sec:cwk datasets trans0152}
+The StatsWales JSON file for \href{https://statswales.gov.wales/Catalogue/Transport/rail/rail-transport/railpassengerjourneys-by-localauthority-year}{rail passenger journeys by local authority and year}, which has the identifier \texttt{trains}. This is a different type of dataset as there is only one measure in it. As a result, there are no \texttt{MEASURE\_CODE} and \texttt{MEASURE\_NAME} columns for this dataset. Instead, we use the following two hardcoded values in \texttt{SINGLE\_MEASURE\_CODE} and \texttt{SINGLE\_MEASURE\_NAME}. These two values do NOT map to columns in the JSON file, but rather are the \emph{values} you should use as the measure code and name when saving the data to your \texttt{Measure} object.
+
+Note that this file had incomplete local authority codes but I have fixed these for you. Also, the data was not collated by calendar year (e.g., years were listed as 2002-03, 2003-04, etc.). For the sake of simplicity in this coursework, I have changed them for you.
+
+
+\subsubsection*{\emph{complete-popu1009-[area|pop|popden].csv}}\label{sec:cwk datasets complete-popu1009}
+There are three CSV files corresponding to the three measures in \emph{popu1009.json}, but with the missing data also added. They have the dataset identifiers \texttt{complete-popden}, \texttt{complete-pop}, and \texttt{complete-area}. These are only single-measure files, thus they have hardcoded measure code and measure name values in \texttt{SINGLE\_MEASURE\_CODE} and \texttt{SINGLE\_MEASURE\_NAME} respectively, as well as an \texttt{AUTH\_CODE} column. There is no need for a \texttt{VALUE} in CSV.
+
+These are manually modified versions of the CSV files generated by the StatsWales website (which produces invalid CSV files by default and does not include local authority codes). These CSV files may need a different parser to the areas CSV file above, thus have a different \texttt{SourceDataType} enum value (\texttt{AuthorityByYearCSV}).
+
+
+
+
+\subsection*{Expected output}\label{sec:cwk output}
+The expectation is that a user can combine the above program arguments to query information and retrieve this either as tables in the terminal output or as JSON. Below are some examples. Block comments throughout the provided code detail the formatting of output too.
+
+
+\subsubsection*{Textual output}\label{sec:cwk output textual}
+To enhance readability, try to align columns and line spacing as per the examples below. Note in the examples below that when you output as tables to the standard output, you need to calculate the mean for the presented data, the difference between the first and last year, and the percentage difference between the first and last year.
+
+If we request data from the \texttt{popden} dataset, for the areas \texttt{W06000011} and \texttt{W06000010}, between \texttt{1990} and \texttt{1993}, the command is:
+\begin{Verbatim}
+$ ./bin/bethyw -d popden -a W06000011,W06000010 -y 1990-1993
+\end{Verbatim}
+\ldots and you should get the output:
+\begin{lstlisting}[backgroundcolor = \color{lightgray}]
+Carmarthenshire / Sir Gaerfyrddin (W06000010)
+Land area (area) 
+       1991        1992        1993     Average    Diff.  % Diff. 
+2370.276200 2370.276200 2370.276200 2370.276200 0.000000 0.000000 
+
+Population density (dens) 
+     1991      1992      1993   Average     Diff.   % Diff. 
+71.605579 71.411509 71.407290 71.474793 -0.198289 -0.276918 
+
+Population (pop) 
+         1991          1992          1993       Average       Diff.   % Diff. 
+169725.000000 169265.000000 169255.000000 169415.000000 -470.000000 -0.276919 
+
+Swansea / Abertawe (W06000011)
+Land area (area) 
+      1991       1992       1993    Average    Diff.  % Diff. 
+377.596400 377.596400 377.596400 377.596400 0.000000 0.000000 
+
+Population density (dens) 
+      1991       1992       1993    Average     Diff.   % Diff. 
+608.435356 608.083128 607.391914 607.970133 -1.043442 -0.171496 
+
+Population (pop) 
+         1991          1992          1993       Average       Diff.   % Diff. 
+229743.000000 229610.000000 229349.000000 229567.333333 -394.000000 -0.171496 
+\end{lstlisting}
+
+If we request data from the \texttt{popden} and \texttt{trains} datasets, for the area \texttt{W06000011}, with the \texttt{rail} and \texttt{pop} meausre, between \texttt{2015} and \texttt{2018}, the command is:
+\begin{Verbatim}
+$ ./bin/bethyw -d popden,trains -a W06000011 -m rail,pop -y 2015-2018
+\end{Verbatim}
+\ldots and you should get the output:
+\begin{lstlisting}[backgroundcolor = \color{lightgray}]
+Swansea / Abertawe (W06000011)
+Population (pop) 
+         2015          2016          2017          2018       Average       Diff.  % Diff. 
+242316.000000 244462.000000 245480.000000 246466.000000 244681.000000 4150.000000 1.712640 
+
+Rail passenger journeys (rail) 
+         2015          2016          2017          2018       Average        Diff.  % Diff. 
+910878.000000 914448.000000 921736.000000 927841.000000 918725.750000 16963.000000 1.862269 
+\end{lstlisting}
+
+
+\subsubsection*{JSON output}\label{sec:cwk output json}
+You must format your JSON output like so. The top level is a key:value mapping where keys are local authority codes. The values should be an object that contains two key:value pairs. One must have the key \texttt{names}, and contain an object of the various names (mapping three-letter language codes to area names). The other must have the key \texttt{measures} and contain the data.
+
+For example:
+\begin{Verbatim}
+$ ./bin/bethyw -d popden,trains -a W06000011 -m rail,pop -y 2015-2018 -j
+\end{Verbatim}
+\ldots and you should get the output (ignore the whitespace/indentation):
+\begin{lstlisting}[backgroundcolor = \color{lightgray}]
+{
+   "W06000011":{
+      "measures":{
+         "pop":{
+            "2015":242316.0,
+            "2016":244462.0,
+            "2017":245480.0,
+            "2018":246466.0
+         },
+         "rail":{
+            "2015":910878.0,
+            "2016":914448.0,
+            "2017":921736.0,
+            "2018":927841.0
+         }
+      },
+      "names":{
+         "cym":"Abertawe",
+         "eng":"Swansea"
+      }
+   }
+}
+\end{lstlisting}
+
+
+
+\subsection*{External libraries included}
+Three external libraries have been included in the coursework in files with a name starting with \emph{lib\_}. \textbf{These are the only external libraries you may use}. They are the \href{https://github.com/catchorg/Catch2}{Catch2 Unit testing framework}, used for the test scripts in \emph{tests/}; \href{https://github.com/jarro2783/cxxopts}{CXXOpts}, used to assist parsing the command line arguments; and \href{https://github.com/nlohmann/json}{JSON for Modern C++}, used to help you parse JSON files quickly and easily.
+
+
+
+
+%
+% \section*{Using Git}\label{sec:git}
+% If you haven't already got Git installed on your computer, \href{https://git-scm.com/downloads}{do that}. If you have never used Git before on your system you will need to run the following commands so that commits you make can be attributed to you in the Git commit history.
+% \begin{Verbatim}
+% $ git config --global user.email "123456@swansea.ac.uk"
+% $ git config --global user.name "YOUR NAME"
+% \end{Verbatim}
+%
+% \subsection*{Initialising a new Git Repository}\label{sec:git init}
+% From the root directory the assignment, execute \texttt{git init} to create a new Git repository in the current directory. This will create a \emph{.git/} directory where information and deltas about your commits are stored. Do not manually modify the \emph{.git/} directory. Note you will have to submit this \emph{.git/} directory with your solution. The output should be something equivalent to:
+% \begin{lstlisting}[backgroundcolor = \color{lightgray}]
+% Initialized empty Git repository in /Users/map/Developer/bethyw/.git/
+% \end{lstlisting}
+%
+% We can check the state of the repository by executing \texttt{git status}. This will show the files and directories that need committing. ``Untracked'' files are files that are modified since the last commit, but that they are not currently associated with the staging of the current commit.
+% \begin{lstlisting}[backgroundcolor = \color{lightgray}]
+% On branch master
+%
+% No commits yet
+%
+% Untracked files:
+%   (use "git add <file>..." to include in what will be committed)
+%     README.md
+%     datasets.h
+%     main.cpp
+%     src/
+%     tests/
+%
+% nothing added to commit but untracked files present (use "git add" to track)
+% \end{lstlisting}
+%
+% \subsection*{Staging and Executing a Git Commit}\label{sec:git commit}
+% To add all changed files to the currently staged commit, execute \texttt{git add -A}. You can also execute \texttt{git add src/bethyw.cpp} or similar commands to add individual files explicitly. You do not have to add all changed files to every commit. This means if you have made changes to multiple files, but were making unrelated changes in each, that you can commit them separately over several commits so that you can describe each of the changes in more meaningful commit messages.  After staging all the files to be committed we can execute \texttt{git status} again to observe the files that will be tracked by the next commit we make:
+% \begin{lstlisting}[backgroundcolor = \color{lightgray}]
+% On branch master
+%
+% No commits yet
+%
+% Changes to be committed:
+%   (use "git rm --cached <file>..." to unstage)
+%     new file:   README.md
+%     new file:   datasets.h
+%     new file:   main.cpp
+%     new file:   src/area.cpp
+%     ...
+%     new file:   tests/testall.cpp
+% \end{lstlisting}
+%
+% To make the commit and reset the staging process so that ﬁles can be added to the next commit execute the \texttt{git commit -m "..."} command. The \texttt{-m} argument is required and should be used to provide a commit message with a meaningful description of what was changed. E.g., you could now make the commit \texttt{git commit -m "Initial commit for CSC371 coursework"}:
+% \begin{lstlisting}[backgroundcolor = \color{lightgray}]
+% [master (root-commit) 829a0e9] Initial commit for CSC371 coursework
+%  26 files changed, 5302 insertions(+)
+%  create mode 100644 README.md
+%  create mode 100644 datasets.h
+%  create mode 100644 main.cpp
+%  create mode 100644 src/area.cpp
+%  ...
+%  create mode 100644 tests/testall.cpp
+% \end{lstlisting}
+%
+% Verify the commit was successful by checking that \texttt{git status} returns clean. Once you have made changes to any of the files \texttt{git status} will report that there are changes to be committed.
+% \begin{lstlisting}[backgroundcolor = \color{lightgray}]
+% On branch master
+% nothing to commit, working tree clean
+% \end{lstlisting}
+
+
+
+\section*{Completing this coursework}\label{sec:tasks}
+
+Below is an abbreviated list of tasks you need to complete, designed to help you structure your progress. The source files provided include extensive comments that explain each function. The test suite is written such that it provides an explanation for all inputs and outputs for each test.
+
+Note, even if you do not complete all the entire coursework, it is still possible to score very well on the coursework. I strongly encourage you to focus on producing good, clean, safe code for some of the tasks than sloppy code for all of them (the latter will potentially lead to a lower mark!).
+
+
+\subsection*{1. Add your student number}\label{sec:tasks student-num}
+Before you do anything else, you need to add your student number to the various files. In \emph{371pass.h}, edit the \texttt{const} \texttt{STUDENT\_NUMBER} and in \hyperref[sec:cwk dir]{all the files above with the circumflex}, edit the initial block comment, replacing \texttt{<STUDENT NUMBER>} with your student ID number.
+
+
+
+\subsection*{2. Examine the documentation fully}\label{sec:tasks documentation}
+Don't try to simply jump into programming this coursework. Good software development requires developers to think through what they are going to program first. Read the guidance on how the program arguments should work and the actions that should be taken with each one. Read the comments and provided code in the various \emph{.h} and \emph{.cpp} files in the \emph{src/} directory and think of how you are going to modify these files to accomplish this task.
+
+
+
+\subsection*{3. Write just enough code to pass the first test}\label{sec:tasks first-test}
+Next, look through the test scripts, understand what is happening. The test scripts are designed so that you can follow them through logically. Try compiling and running your code with the first test script (\emph{tests/test1.cpp}) and observe the output. This test script compiles, but when you run it your test fails.
+
+The first test relates to the action program argument and determines whether your implementation of the \texttt{parseActionArgument()} function in the \texttt{App} namespace (found in \emph{371pass.h/cpp}) can convert the string representation passed in from the command line argument into a valid of the \texttt{Action} enum (\emph{371pass.h} includes a description of this enum) or throws an exception.
+
+Look at this function's existing implementation and modify it to pass the test. Once your test passes, think: are there other edge cases not covered by this test? Could this be done more efficiently? Is this the most elegant solution? If so, improve the correctness and efficiency of your code.
+
+
+\subsection*{4. Passing the other tests}\label{sec:tasks more-tests}
+Once you have satisfied yourself that your implementation of \texttt{parseActionArgument()} is correct and done well, move on to the next test script. Remember, marks are awarded in this coursework for both correctness and style. 
+
+For the additional tests, the test may not even compile---this is because the test calls functions that are not yet implemented. You will need to read the test file to see which ones fail. Reading the test script is very useful in understanding how the function should work. In the various \emph{.cpp} files in the \emph{src/} directory, there are \texttt{TODO} comments that describe each function you must implement.
+
+
+\subsection*{5. Write code not covered by the tests}\label{sec:tasks untested-code}
+Some functions do not have unit tests that cover them, and some functionality of your program may not be tested by the provided tests. Once you have passed the tests, continue to look through your code in the \emph{src/} directory and ensure you have implemented every function and feature that has been requested. 
+
+
+\subsection*{6. Edit, edit, edit!}\label{sec:tasks edit}
+Every book you've read, every set of lecture slides you've glanced over, and every program's source code you've used have all been \emph{edited}. Very few programs are perfect first time—look over your code, think through if you're doing things the right way. Read the documentation again and decide whether your code meets what is expected. Write additional tests, or try out different program arguments. For many of you, this will be one of your last pieces of software you write in your degree, and at this point, you should have an appreciation for programming as a craft.
+
+
+
+\newpage\section*{Submission instructions}
+You \textbf{should} modify the \texttt{README} file in this directory to concisely explain any of the known caveats or issues with your implementation that you would like to be known during marking.
+
+You must submit your code to \submissionlink{} before the deadline. Autograder only accepts specific files and will ignore any unneeded files. Autograder does not accept directories or ZIP files—you must upload your .cpp and .h files and your README.md file. 
+
+\textbf{Please test that Autograder works for you now} by uploading the coursework framework. Some users occasionally encounter system errors with Autograder that seem to be caused by cookies. If this happens to you, try logging into Autograder in a private browsing/incognito window. Autograder is the only submission mechanism and you have ample time to test this before the deadline. 
+
+
+
+
+%You may resubmit to the Canvas assignment an unlimited number of times before the deadline. Please re-upload often as you complete additional parts of the coursework. In the past, people have only made one submission very close to the deadline. If you do not make any submissions up until very close to the deadline and there is a problem (e.g. even a momentary drop of your Internet connection) you could miss the submission deadline.
+
+
+\section*{Grading criteria}
+The assignment is graded out of 100 marks:
+
+\noindent{}\textbf{30 marks} are awarded for successfully passing automated unit tests provided in the \emph{tests/} directory. You can test your code against these tests on \href{\mysubmissionsurl}{the `My Submissions' on CS Autograder}. The output of the Catch2 test is visible if you expand each test.
+
+\noindent{}\textbf{30 marks} are awarded for successfully passing additional automated tests, which have not been provided. These tests include greater coverage of your program, and test for things described in the framework comments, but not necessarily tested in the provided test suite.
+
+\noindent{}\textbf{40 marks} are for good coding practice, and awarded in independently of the completeness marks above. You must produce clean, concise, and readable code. A non-exhaustive list of things that will you will lose marks for:
+\begin{itemize}
+    \item Code that compiles with any warnings in GCC (e.g., using the \texttt{-pedantic} and \texttt{-Wall} flags).
+
+    \item Poor or inconsistent choice of variable names, or poorly formatted, non-indented, or incorrectly structured code
+
+    \item Code that is inefficient/requires excessive computation
+
+    \item Incorrect or missing usage of \texttt{const} keyword for parameter types, return types, and member function declarations
+
+    \item Incorrect or unsafe use of pointers and references, or unsafe memory management
+    % \begin{itemize}
+    %     \item Code will be executed using \href{https://valgrind.org}{Valgrind} during grading to check for memory consistency
+    % \end{itemize}
+
+    \item Unneeded duplication of computation or use of redundant code or variables
+
+    \item Producing code that is at-risk of throwing uncaught or unexpected exceptions
+
+    \item Not including all functions as prototypes in header files
+
+    \item Removal, reordering, or not using the block comments present in the provided files
+
+        \begin{itemize}
+            \item These comments are as much to help you understand the specification as they are to help grade your work efficiently
+            \item It is infeasible to grade 160 assignments unless they are consistently formatted and each part of your implementation can be found predictably
+    \end{itemize}
+
+    \item Excessive or non-existent use of commenting. Use comments to highlight code you have written, or code which may not have an obvious meaning. This can help the marker identify places to award marks. You should assume the marker knows C++, so do not need to comment obvious code.
+\end{itemize}
+
+You may gain marks for adding additional functionality to your programs beyond the specification, but be careful not to break any of the existing tests.
+
+
+\end{document}
