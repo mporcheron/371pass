@@ -79,7 +79,7 @@ You must submit your coursework by the due date listed on Canvas and CS Autograd
 
 You can submit to Autograder a maximum of 10 times per day. Note that the results from Autograder may take a while to generate, especially if there are many simultaneous submissions, thus you are strongly discouraged from making last‑minute changes and submissions just before the deadline. We will only take the last submission to Autograder, thus if you submit close to the deadline, your results may come after the deadline and may be lower if you broke something!
 
-\textbf{Please test that Autograder works for you now} by uploading the coursework framework. Some users occasionally encounter system errors with Autograder that seem to be caused by cookies. If this happens to you, try logging into Autograder in a private browsing/incognito window.
+\textbf{Please test that \autograderlink{} works for you now} by uploading the coursework framework. Some users occasionally encounter system errors with Autograder that seem to be caused by cookies. If this happens to you, try logging into Autograder in a private browsing/incognito window.
 
 This coursework is worth 100 marks, and equates to 20\% of your module grade.
 
@@ -194,191 +194,346 @@ Studying these files, along with the documentation in the provided source code a
 Although you should generally get the same output with whichever compiler you use, your code will be tested using the GNU Compiler Collection 10.2.
 
 \subsubsection*{Testing your code on Autograder}
-The CS Autograder service, which is the main submission process for this module, uses GCC 10.2. You can submit your coursework up to 10 times a day up to the deadline. The service will compile and run your code against the provided the unit tests. You will be able to see the results of these tests, allowing you to refine your submission. Due to the number of students on this module, it may take a while for test results to be generated. I would strongly discourage you from submitting to Autograder close to the deadline as demand will be high, and your results may arrive after the deadline.
+The CS Autograder service, which is the main submission process for this module, uses GCC 10.2. You can submit your coursework up to 10 times a day up to the deadline. The service will compile and run your code against the provided the unit tests. You will be able to see the results of these tests, allowing you to refine your submission. Due to the number of students on this module, it may take a while for test results to be generated. I would strongly discourage you from submitting to Autograder close to the deadline as demand will be high, and your results may arrive after the deadline (this happened last year!).
 
 
 
 \subsection*{Program arguments}\label{sec:cwk args}
+Your program must read in a series of program/command line arguments (not \texttt{stdin}!) and parse them. A library has been included that will handle and convert these values to \texttt{std::string} objects inside \emph{371pass.cpp}. You will have to write additional code in this file to fully implement the functionality described below. See \hyperref[sec:cwk outputs]{the next section} for examples of the various outputs and error messages your program should give in different situations. 
 
-Your program must read in a series of command line arguments (not \texttt{stdin}!) and parse them. A library has been included that will handle and convert these values to \texttt{std::string} or \texttt{std::vector} objects inside \emph{bethyw.cpp}. You will have to write additional code in this file to fully implement the functionality described below. Note that some arguments will be redefined in \hyperref[sec:tasks extended-args]{a task} later.
+\begin{labeling}{ \texttt{--category value} }
+    \item[\texttt{--database value}]
+    Filename of the 371pass database (the default value \emph{database.json} is assumed if one is not provided)
 
-\begin{labeling}{\texttt{ -d arg or --datasets arg}}
-    \item[\texttt{--dir arg}]
+    \item[\texttt{--action value}]
+    For this coursework, your program needs to be able to do four things: `\emph{create}', `\emph{read}', `\emph{update}', or `\emph{delete}' categories, items, or entries. Accordingly, these are the four possible values for the \texttt{action} program argument. I recommend you focus on implementing code for when the action argument is \texttt{read} first, followed by \texttt{create}, \texttt{delete} and \texttt{update}.
 
-    The directory \texttt{arg} contains the datasets that will be used (default: \emph{datasets/}). This argument is optional (i.e., if the program is run without the argument supplied, the value \emph{datasets} is used).
+    \item[\texttt{--category value}]
+    Apply the action to a category, where \texttt{value} is the name of the category. Identifiers cannot be empty. The functionality of the \texttt{category} argument depends upon the value of the \texttt{action} argument:
+        \begin{itemize}
+    
+        \item If the \texttt{action} program argument is \emph{create}, then a category should be created in the database with the identifier (often shortened to `ident') equal to the value of the \texttt{category} argument. If a category exists already with that identifier, do nothing. In both cases, your program should not output anything and return an exit code of \texttt{0}.
+    
+        \item If the \texttt{action} program argument is \emph{read}, and a category identifier matches the value of the \texttt{category} argument, output the data in that category as JSON to \texttt{stdout} and exit with a code of \texttt{0}. If such a category does not exist, output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
+    
+        \item If the \texttt{action} program argument is \emph{update}, and you want to rename a category, then the category argument should be in the format \\\texttt{oldidentifier}:\texttt{newidentifier} such that your program will rename the category with identifier \texttt{oldidentifier} to \texttt{newidentifier}. If successful, your program will output nothing and return an exit code of 0. If such a category does not exist, output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
+    
+        \item If the \texttt{action} program argument is \emph{delete} and there is a category in the database with the identifier equal to the value of the \texttt{category} argument, delete it. If successful, your program should not output anything and return an exit code of \texttt{0}. If not successful, (i.e., no category exists), output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
+        \end{itemize}
+    
+    \item[\texttt{--item value}]
+    Apply the action to an item, where \texttt{value} is the identifier for the item. Identifiers cannot be empty. You must also supply the \texttt{category} argument when supplying the \texttt{item} argument (i.e., all items must be in a category). The functionality of the \texttt{category} argument depends upon the value of the \texttt{action} and \texttt{category} arguments:
+        \begin{itemize}
+    
+        \item If the \texttt{action} program argument is \emph{create}, then an item should be created in the database with the identifier equal to the value of the \texttt{item} argument in a category specified by the \texttt{category} argument. If an item exists already with that identifier, do nothing. In both cases, your program should not output anything and exit with a code of \texttt{0}.
+    
+        \item If the \texttt{action} program argument is \emph{read}, and a item identifier matches the value of the \texttt{category} and \texttt{category} arguments, output the data in that item as JSON to \texttt{stdout} and exit with a code of \texttt{0}. If such an item does not exist, output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
+    
+        \item If the \texttt{action} program argument is \emph{update}, and you want to rename an item, then the item argument should be in the format \\\texttt{oldidentifier:newidentifier} such that your program will rename the item with identifier \texttt{oldidentifier} to \texttt{newidentifier} in the category specified by the \texttt{category} argument. If successful, your program will output nothing and return an exit code of 0. If such an item does not exist, output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
+    
+        \item If the \texttt{action} program argument is \emph{delete} and there is an item in the database with the identifier equal to the value of the \texttt{item} argument in the category specified by the \texttt{category} argument, delete it. If successful, your program should not output anything and return an exit code of \texttt{0}. If not succesful, (i.e., no item exists), output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
+        \end{itemize}
 
-    \item[\texttt{-d arg} or \texttt{--datasets arg}]
-
-    The dataset(s) to import and analyse as a comma-separated list of codes. This argument is optional. If it not set, or it is set  and contains the value \texttt{all}, then all datasets should be imported. Possible values can be found in \emph{datasets.h} as the member variable \texttt{CODE} in the \texttt{InputFileSource} struct inside the \texttt{InputFiles} namespace.
-
-    \item[\texttt{-a arg} or \texttt{--areas arg}]
-
-    The areas(s) to import and analyse as a comma-separated list. Initially, \texttt{arg} should be implemented such that filtering is done using local authority codes, as found within the dataset files. This argument is optional. If it not set, or it is set  and contains the value \texttt{all}, then all areas should be imported.
-
-    \item[\texttt{-m arg} or \texttt{--measures arg}]
-
-    The measure(s) from the dataset(s) to import and analyse as a comma-separated list. Initially, \texttt{arg} should be implemented such that filtering is done using the codenames for measures, as found within the dataset files. This argument is optional. If it not set, or it is set and contains the value \texttt{all}, then all measures from all imported datasets should be imported.
-
-    \item[\texttt{-y arg} or \texttt{--years arg}]
-
-    The years(s) from the dataset(s) to import. \texttt{arg} can either be of the form \texttt{YYYY} (e.g. \texttt{2012} to import data for the year 2012) or \texttt{YYYY-ZZZZ} (e.g. \texttt{2012-2015} to import the 4 years from \texttt{2012} to \texttt{2015}). This argument is optional. If it not set, or it is set and contains the value \texttt{0} or \texttt{0-0}, then all years should be imported.
-
-    \item[\texttt{-j} or \texttt{--json}]
-
-    Output the data as JSON instead of tables (see \hyperref[sec:cwk output]{below}).
+    \item[\texttt{--entry value}]
+    Apply the action to an item, where \texttt{value} contains either the key or value or both for an entry (depending on the \texttt{action} argument). Keys cannot be empty. You must also supply the \texttt{category} argument when supplying the \texttt{item} argument.  The functionality of the \texttt{category} argument depends upon the value of the \texttt{action}, \texttt{category}, and \texttt{item} arguments:
+        \begin{itemize}
+    
+        \item If the \texttt{action} program argument is \emph{create}, then the entry argument should be in the format \texttt{name,Martin} such that an entry with the key \texttt{name} and value \texttt{Martin} be added to the item specified by the \texttt{item} argument in a category specified by the \texttt{category} argument. If such an entry exists with this key, update the value. If the entry argument contains no comma (\texttt{,}) then assume the entire argument value is the key and an empty value. In all cases, your program should not output anything and exit with a code of \texttt{0}.
+    
+        \item If the \texttt{action} program argument is \emph{read}, and there is an entry in the database with the key equal to the value of the \texttt{entry} argument in the item and category specified by the \texttt{item} and \texttt{category} arguments, output the value of the entry (\underline{not} in JSON format) and exit with a code of \texttt{0}. If such an entry does not exist, output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
+    
+        \item If the \texttt{action} program argument is \emph{update}, and you want to rename an entry, then the entry argument should be in the format \texttt{name:Person} such that your program will rename the entry with key \texttt{name} to \texttt{Person} in the item and category specified by the \texttt{item} and \texttt{category} arguments. If you wish to update the value of an entry, the entry argument should be in the format \texttt{name,Albert} such that your program will update the entry with key \texttt{name} to have value \texttt{Albert}. If you wish to update the key and value of an entry, then the \texttt{entry} argument should be in the format \texttt{name:Person,Albert} such that your program will update the entry with key \texttt{name} to have key \texttt{Person} and value \texttt{Albert}. If successful, your program will output nothing and return an exit code of 0.  If such an entry does not exist, output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
+    
+        \item If the \texttt{action} program argument is \emph{delete} and there is an entry in the database with the key equal to the value of the \texttt{entry} argument in the item and category specified by the \texttt{item} and \texttt{category} arguments, delete it. If successful, your program should not output anything and return an exit code of \texttt{0}. If not succesful, (i.e., no item exists), output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
+        \end{itemize}
+    
+    \item[\texttt{-h} or \texttt{--help}]
+    Output the program help information. This command has been implemented for you.
 \end{labeling}
 
+Note that as a result of the above, category and item identifiers cannot contain a colon (\texttt{:}) and entries cannot contain a colon (\texttt{:}) or a comma (\texttt{,}) in their key or value. This is simply a design limitiation and you should not worry about it. Your code will \underline{not} be tested in this situations.
 
+\subsection*{Expected outputs}\label{sec:cwk outputs}
+Below are a number of sample commands and outputs expected using the sample \texttt{database.json} file provided in the coursework framework. Ignore line breaks in the terminal output. Your program will be tested with similar commands to the below using a semi-automated process. Although these outputs are not tested by the unit tests in the \emph{tests/} directory, you are expected to ensure you program has outputs as below.
 
-\subsection*{Included datasets}\label{sec:cwk datasets}
-
-A number of data files are stored in the \emph{datasets/} directory and are declared in \emph{datasets.h}. Do not replace or modify any of these files---your coursework will be marked with a fresh copy of them. 
-
-Read the code in \emph{datasets.h} that provides details about these files, comparing this code to the explanation below. This file contains code that is not a particularly efficient way of storing this information (i.e., with maps storing data on the heap). The intention here was to create a file that resembles what might have been generated by some form of runtime computation of available datasets (like a future version of the system might have). For ease in this coursework, I have provided it as statically-defined data so you can inspect all the relevant information in code.
-
-In \emph{datasets.h}, each \texttt{InputFileSource} instance in the \texttt{InputFiles} namespace includes: the program argument value for filtering the dataset (using \texttt{-d}/\texttt{--datasets}), a human-readable name for the dataset, a filename, a \texttt{SourceDataType} enum value (used by functions in \emph{areas.cpp}), and a map whose type is aliased as \texttt{SourceColumnMapping}, linking the enum \texttt{SourceColumn} (which includes a list of all possible relevant columns) to the string value of the column. Read the explanation of these \texttt{enum}s in this file before proceeding.
-
-\subsubsection*{\emph{areas.csv}}\label{sec:cwk datasets areas}
-A list of areas in Wales, mapping the local authority code to a name in English and a name in Welsh. It should be handled by specific code for parsing this authority code CSV, and has three columns, one for the authority code (\texttt{AUTH\_CODE}), one for the name in English (\texttt{AUTH\_NAME\_ENG}) and one for the name in Welsh (\texttt{AUTH\_NAME\_CYM}).
-
-This is a special dataset that should always be imported irrespective of the \texttt{-d}/\texttt{--datasets} argument (but the areas imported can still be filtered by the \texttt{-a}/\texttt{--areas} argument).
-
-\subsubsection*{\emph{popu1009.json}}\label{sec:cwk datasets popu1009}
-The StatsWales JSON file for \href{http://open.statswales.gov.wales/en-gb/dataset/popu1009}{population density by local authority}. This dataset file has the identifier \texttt{popden} (i.e. it should be included if the \texttt{-d}/\texttt{--datasets} argument is not supplied, contains \texttt{all}, or contains \texttt{popden}). It is given the human-readable name of ``Population density''. It is a JSON file that should be handled by our function for parsing StatsWales JSON files.  There are three measures in this file: \emph{Population} (codename: \texttt{pop}), \emph{Population Density} (codename: \texttt{dens}), and \emph{Land Area} (codename: \texttt{area}).
-
-StatsWales JSON files have three high-level key:value pairs, with the data we need stored in the value accessed by the key \texttt{value}. \texttt{value} itself is an array/list of rows in the dataset, organised as key:value pairs. There is much data here, but we only need the following pairs:
-
-\begin{itemize}
-    \item The value of \texttt{Localauthority\_Code} contains the local authority code, which is mapped to the \texttt{AUTH\_CODE} \texttt{enum} column heading in \emph{datasets.h}, and used in the \texttt{-a}/\texttt{--areas} program argument filter
-
-    \item The value of \texttt{Localauthority\_ItemName\_ENG} contains the the local authority name in English, which is mapped to the \texttt{AUTH\_NAME\_ENG} \texttt{enum} column heading in \emph{datasets.h}
-
-    \item The value of \texttt{Measure\_Code} contains an identifier for the measure, which is mapped to the \texttt{MEASURE\_CODE} \texttt{enum} column heading in \emph{datasets.h}, and used in the \texttt{-m}/\texttt{--measure} program argument filter
-
-    \item The value of \texttt{Measure\_ItemName\_ENG} contains the English name for the measure, which is mapped to the \texttt{MEASURE\_NAME} \texttt{enum} column heading in \emph{datasets.h}
-
-    \item The value of \texttt{Year\_Code} contains a year for a particular value, which is mapped to the \texttt{YEAR} \texttt{enum} column heading in \emph{datasets.h}, and used in the \texttt{-y}/\texttt{--years} program argument filter
-
-    \item The value of \texttt{VALUE} contains the value for the given local authority, measure, and year, and is mapped to the \texttt{VALUE} \texttt{enum} column heading in \emph{datasets.h}
-\end{itemize}
-
-Note that a bug on the StatsWales website truncates this JSON file and it misses many areas.
-
-
-\subsubsection*{\emph{econ0080.json}}\label{sec:cwk datasets econ0080}
-The StatsWales JSON file for \href{https://statswales.gov.wales/Catalogue/Business-Economy-and-Labour-Market/Businesses/Business-Demography/activebusinessenterprises-by-area-year}{active businesses by area and year}, which has the identifier \texttt{biz}. There are 8 different measures in this file: \emph{the number of active enterprises} (codename: \texttt{a}), \emph{the number of newly opened enterprises} (codename: \texttt{b}), \emph{the number of enterprises closing} (codename \texttt{d}), \emph{the number of active enterprises per 10,000 of the population aged 16 to 64} (codename: \texttt{pa}), \emph{the number of births per 10,000 of the population aged 16 to 64} (codename: \texttt{pb}), \emph{the number of deaths per 10,000 of the population aged 16 to 64} (codename: \texttt{pd}), \emph{the birth rate as a percentage of active enterprises} (codename: \texttt{rb}), and \emph{the death rate as a percentage of active enterprises} (codename: \texttt{rd}). The column headings are defined in the same way as \emph{popu1009.json} (see \emph{datasets.h}).
-
-
-\subsubsection*{\emph{envi0201.json}}\label{sec:cwk datasets envi0201}
-The StatsWales JSON file for \href{https://statswales.gov.wales/Catalogue/Environment-and-Countryside/Air-Quality/airqualityindicators-by-localauthority}{air quality indicators, by local authority}, which has the identifier \texttt{aqi}. There are three measures in this file: \emph{NO\textsubscript{2}} readings (codename: \texttt{no2}), \emph{PM10} readings (codename: \texttt{pm10}), and \emph{PM2.5} readings (codename: \texttt{pm2-5}). The column headings are defined in the same way as \emph{popu1009.json} (see \emph{datasets.h}). %Inconsistently, though, the StatsWales website outputs the data variable in the \texttt{VALUE} column as a string and not a numerical value. Therefore, you will need to make sure your code converts this value safely.
-
-%Note this JSON file includes additional areas compared with the previous datasets. You must correctly import all the data in the file, including the new local areas (dependant on the filtering options supplied via the program arguments).
-
-
-\subsubsection*{\emph{trans0152.json}}\label{sec:cwk datasets trans0152}
-The StatsWales JSON file for \href{https://statswales.gov.wales/Catalogue/Transport/rail/rail-transport/railpassengerjourneys-by-localauthority-year}{rail passenger journeys by local authority and year}, which has the identifier \texttt{trains}. This is a different type of dataset as there is only one measure in it. As a result, there are no \texttt{MEASURE\_CODE} and \texttt{MEASURE\_NAME} columns for this dataset. Instead, we use the following two hardcoded values in \texttt{SINGLE\_MEASURE\_CODE} and \texttt{SINGLE\_MEASURE\_NAME}. These two values do NOT map to columns in the JSON file, but rather are the \emph{values} you should use as the measure code and name when saving the data to your \texttt{Measure} object.
-
-Note that this file had incomplete local authority codes but I have fixed these for you. Also, the data was not collated by calendar year (e.g., years were listed as 2002-03, 2003-04, etc.). For the sake of simplicity in this coursework, I have changed them for you.
-
-
-\subsubsection*{\emph{complete-popu1009-[area|pop|popden].csv}}\label{sec:cwk datasets complete-popu1009}
-There are three CSV files corresponding to the three measures in \emph{popu1009.json}, but with the missing data also added. They have the dataset identifiers \texttt{complete-popden}, \texttt{complete-pop}, and \texttt{complete-area}. These are only single-measure files, thus they have hardcoded measure code and measure name values in \texttt{SINGLE\_MEASURE\_CODE} and \texttt{SINGLE\_MEASURE\_NAME} respectively, as well as an \texttt{AUTH\_CODE} column. There is no need for a \texttt{VALUE} in CSV.
-
-These are manually modified versions of the CSV files generated by the StatsWales website (which produces invalid CSV files by default and does not include local authority codes). These CSV files may need a different parser to the areas CSV file above, thus have a different \texttt{SourceDataType} enum value (\texttt{AuthorityByYearCSV}).
-
-
-
-
-\subsection*{Expected output}\label{sec:cwk output}
-The expectation is that a user can combine the above program arguments to query information and retrieve this either as tables in the terminal output or as JSON. Below are some examples. Block comments throughout the provided code detail the formatting of output too.
-
-
-\subsubsection*{Textual output}\label{sec:cwk output textual}
-To enhance readability, try to align columns and line spacing as per the examples below. Note in the examples below that when you output as tables to the standard output, you need to calculate the mean for the presented data, the difference between the first and last year, and the percentage difference between the first and last year.
-
-If we request data from the \texttt{popden} dataset, for the areas \texttt{W06000011} and \texttt{W06000010}, between \texttt{1990} and \texttt{1993}, the command is:
-\begin{Verbatim}
-$ ./bin/bethyw -d popden -a W06000011,W06000010 -y 1990-1993
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass
 \end{Verbatim}
-\ldots and you should get the output:
-\begin{lstlisting}[backgroundcolor = \color{lightgray}]
-Carmarthenshire / Sir Gaerfyrddin (W06000010)
-Land area (area) 
-       1991        1992        1993     Average    Diff.  % Diff. 
-2370.276200 2370.276200 2370.276200 2370.276200 0.000000 0.000000 
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+Error: missing action argument(s).
+    \end{lstlisting}
+    
+    \item[exit:]
+    \texttt{1}
+\end{labeling}
 
-Population density (dens) 
-     1991      1992      1993   Average     Diff.   % Diff. 
-71.605579 71.411509 71.407290 71.474793 -0.198289 -0.276918 
-
-Population (pop) 
-         1991          1992          1993       Average       Diff.   % Diff. 
-169725.000000 169265.000000 169255.000000 169415.000000 -470.000000 -0.276919 
-
-Swansea / Abertawe (W06000011)
-Land area (area) 
-      1991       1992       1993    Average    Diff.  % Diff. 
-377.596400 377.596400 377.596400 377.596400 0.000000 0.000000 
-
-Population density (dens) 
-      1991       1992       1993    Average     Diff.   % Diff. 
-608.435356 608.083128 607.391914 607.970133 -1.043442 -0.171496 
-
-Population (pop) 
-         1991          1992          1993       Average       Diff.   % Diff. 
-229743.000000 229610.000000 229349.000000 229567.333333 -394.000000 -0.171496 
-\end{lstlisting}
-
-If we request data from the \texttt{popden} and \texttt{trains} datasets, for the area \texttt{W06000011}, with the \texttt{rail} and \texttt{pop} meausre, between \texttt{2015} and \texttt{2018}, the command is:
-\begin{Verbatim}
-$ ./bin/bethyw -d popden,trains -a W06000011 -m rail,pop -y 2015-2018
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action 123
 \end{Verbatim}
-\ldots and you should get the output:
-\begin{lstlisting}[backgroundcolor = \color{lightgray}]
-Swansea / Abertawe (W06000011)
-Population (pop) 
-         2015          2016          2017          2018       Average       Diff.  % Diff. 
-242316.000000 244462.000000 245480.000000 246466.000000 244681.000000 4150.000000 1.712640 
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+Error: invalid action argument(s).
+    \end{lstlisting}
+    
+    \item[exit:]
+    \texttt{1}
+\end{labeling}
 
-Rail passenger journeys (rail) 
-         2015          2016          2017          2018       Average        Diff.  % Diff. 
-910878.000000 914448.000000 921736.000000 927841.000000 918725.750000 16963.000000 1.862269 
-\end{lstlisting}
-
-
-\subsubsection*{JSON output}\label{sec:cwk output json}
-You must format your JSON output like so. The top level is a key:value mapping where keys are local authority codes. The values should be an object that contains two key:value pairs. One must have the key \texttt{names}, and contain an object of the various names (mapping three-letter language codes to area names). The other must have the key \texttt{measures} and contain the data.
-
-For example:
-\begin{Verbatim}
-$ ./bin/bethyw -d popden,trains -a W06000011 -m rail,pop -y 2015-2018 -j
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action read  
 \end{Verbatim}
-\ldots and you should get the output (ignore the whitespace/indentation):
-\begin{lstlisting}[backgroundcolor = \color{lightgray}]
-{
-   "W06000011":{
-      "measures":{
-         "pop":{
-            "2015":242316.0,
-            "2016":244462.0,
-            "2017":245480.0,
-            "2018":246466.0
-         },
-         "rail":{
-            "2015":910878.0,
-            "2016":914448.0,
-            "2017":921736.0,
-            "2018":927841.0
-         }
-      },
-      "names":{
-         "cym":"Abertawe",
-         "eng":"Swansea"
-      }
-   }
-}
-\end{lstlisting}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+{"Bank Accounts":{"Starling":{"Account Number":"12345678","Name":"Mr John Doe",
+"Sort Code":"12-34-56"}},"Websites":{"Facebook":{"password":"pass1234fb",
+"url":"https://www.facebook.com/","username":"example@outlook.com"},"Google":
+{"password":"pass1234","url":"https://www.google.com/","username":
+"example@outlook.com"},"Twitter":{"password":"r43rfsffdsfdsf","url":
+"https://www.twitter.com/","username":"example@outlook.com"}}}
+    \end{lstlisting}
+    
+    \item[stderr:]
+    \emph{empty}
+    
+    \item[exit:]
+    \texttt{0}
+\end{labeling}
 
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action read --category "Bank Accounts"
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+{"Starling":{"Account Number":"12345678","Name":"Mr John Doe","Sort Code":"12-34-56"}}
+    \end{lstlisting}
+    
+    \item[stderr:]
+    \emph{empty}
+    
+    \item[exit:]
+    \texttt{0}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action read --category "Bank Accounts" --item "Starling"   
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+{"Account Number":"12345678","Name":"Mr John Doe","Sort Code":"12-34-56"}
+    \end{lstlisting}
+    
+    \item[stderr:]
+    \emph{empty}
+    
+    \item[exit:]
+    \texttt{0}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action read --category "Bank Accounts" --item "Starling"
+                --entry "Account Number"
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+12345678
+    \end{lstlisting}
+    
+    \item[stderr:]
+    \emph{empty}
+    
+    \item[exit:]
+    \texttt{0}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action read --category "Bank Accounts" --item "Starling"
+                --entry "Account"
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+Error: invalid entry argument(s).
+    \end{lstlisting}
+    
+    \item[exit:]
+    \texttt{1}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action read --category "Banks" --item "Sterling"
+                --entry "Account" 
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+Error: invalid category argument(s).
+    \end{lstlisting}
+    
+    \item[exit:]
+    \texttt{1}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action read --entry "Account" 
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+Error: missing category argument(s).
+    \end{lstlisting}
+    
+    \item[exit:]
+    \texttt{1}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action read --item "Starling" --entry "Account" 
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+Error: missing category argument(s).
+    \end{lstlisting}
+    
+    \item[exit:]
+    \texttt{1}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action read --category "Bank Accounts" --entry "Account" 
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+Error: missing item argument(s).
+    \end{lstlisting}
+    
+    \item[exit:]
+    \texttt{1}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action create
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+Error: missing category, item or entry argument(s).
+    \end{lstlisting}
+    
+    \item[exit:]
+    \texttt{1}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action create --category "Banks" --item "Sterling"
+                --entry "Account,9876543"
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \emph{empty}
+    
+    \item[exit:]
+    \texttt{0}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action update --category "Banks" --item "Sterling"
+                --entry "Account,123456"
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \emph{empty}
+    
+    \item[exit:]
+    \texttt{0}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action delete --category "Banks"
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \emph{empty}
+    
+    \item[exit:]
+    \texttt{0}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action test
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+Error: invalid action argument(s).
+    \end{lstlisting}
+    
+    \item[exit:]
+    \texttt{1}
+\end{labeling}
+
+\begin{Verbatim}[formatcom=\bfseries]
+$ ./bin/371pass --action update --category "Bank Accounts" --item "Starling"
+                --entry "Account Number:"
+\end{Verbatim}
+\begin{labeling}{ stdout:}
+    \item[stdout:]
+    \emph{empty}
+    
+    \item[stderr:]
+    \begin{lstlisting}[backgroundcolor = \color{lightgray},belowskip=0pt]
+Error: invalid entry argument(s).
+    \end{lstlisting}
+    
+    \item[exit:]
+    \texttt{1}
+\end{labeling}
+
+These outputs should given you an idea of the expected outputs across the program, but if you have questions, please ask on the \hyperlink{https://canvas.swansea.ac.uk/courses/24793/discussion_topics/217912}{Canvas discussion board for the coursework}.
 
 
 \subsection*{External libraries included}
@@ -495,14 +650,14 @@ Every book you've read, every set of lecture slides you've glanced over, and eve
 
 
 
-\newpage\section*{Submission instructions}
+\section*{Submission instructions}
 You \textbf{should} modify the \texttt{README} file in this directory to concisely explain any of the known caveats or issues with your implementation that you would like to be known during marking.
 
 You must submit your code to \submissionlink{} before the deadline. Autograder only accepts specific files and will ignore any unneeded files. Autograder does not accept directories or ZIP files—you must upload your .cpp and .h files and your README.md file. 
 
 \textbf{Please test that Autograder works for you now} by uploading the coursework framework. Some users occasionally encounter system errors with Autograder that seem to be caused by cookies. If this happens to you, try logging into Autograder in a private browsing/incognito window. Autograder is the only submission mechanism and you have ample time to test this before the deadline. 
 
-
+All submissions to Autograder count as coursework submissions, thus for each submission, you must comply with the University’s policy on Academic Integrity and Academic Misconduct (even if you later replace this submission with a new version).
 
 
 %You may resubmit to the Canvas assignment an unlimited number of times before the deadline. Please re-upload often as you complete additional parts of the coursework. In the past, people have only made one submission very close to the deadline. If you do not make any submissions up until very close to the deadline and there is a problem (e.g. even a momentary drop of your Internet connection) you could miss the submission deadline.
@@ -511,15 +666,17 @@ You must submit your code to \submissionlink{} before the deadline. Autograder o
 \section*{Grading criteria}
 The assignment is graded out of 100 marks:
 
-\noindent{}\textbf{30 marks} are awarded for successfully passing automated unit tests provided in the \emph{tests/} directory. You can test your code against these tests on \href{\mysubmissionsurl}{the `My Submissions' on CS Autograder}. The output of the Catch2 test is visible if you expand each test.
+\noindent{}\textbf{20 marks} are awarded for successfully passing automated unit tests provided in the \emph{tests/} directory. You can see the result of your code against these tests on \href{\mysubmissionsurl}{the `My Submissions' on CS Autograder}. The output of the Catch2 test is visible if you expand each test.
+
+\noindent{}\textbf{15 marks} are awarded for successfully passing automated output tests provided through \autograderlink{}. You can see the result of your code against these tests on \href{\mysubmissionsurl}{the `My Submissions' on CS Autograder}. The output of your program and the expected output is visible if you expand each test. Due to a limitation in the design of autograder, marks for automated output tests are not shown (each output test is 1 mark).
 
 \noindent{}\textbf{30 marks} are awarded for successfully passing additional automated tests, which have not been provided. These tests include greater coverage of your program, and test for things described in the framework comments, but not necessarily tested in the provided test suite.
 
-\noindent{}\textbf{40 marks} are for good coding practice, and awarded in independently of the completeness marks above. You must produce clean, concise, and readable code. A non-exhaustive list of things that will you will lose marks for:
+\noindent{}\textbf{35 marks} are for good coding practice, and awarded in independently of the completeness marks above. You must produce clean, concise, and readable code. These marks are awarded in a negative marking approach (i.e., you lose marks for bad coding practice) as by now, you should always be working towards good coding standards. A non-exhaustive list of things that will you will lose marks for:
 \begin{itemize}
     \item Code that compiles with any warnings in GCC (e.g., using the \texttt{-pedantic} and \texttt{-Wall} flags).
 
-    \item Poor or inconsistent choice of variable names, or poorly formatted, non-indented, or incorrectly structured code
+    \item Poor or inconsistent choice of variable names (e.g., \hyperlink{https://en.wikipedia.org/wiki/Variable_shadowing}{shadowing variables}), or poorly formatted, non-indented, or incorrectly structured code
 
     \item Code that is inefficient/requires excessive computation
 

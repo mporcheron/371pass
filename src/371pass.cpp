@@ -99,22 +99,20 @@ int App::run(int argc, char *argv[]) {
     }
 
   } catch (const cxxopts::missing_argument_exception &ex) {
-    std::cerr << "Error: the " << ex.what()
-              << " argument must be provided."
-                 "\n\n";
-    std::cerr << options.help() << '\n';
+    std::cerr << "Error: missing " << ex.what() << " argument(s).\n";
     return 1;
-  } catch (const std::invalid_argument &ex) {
-    std::cerr << "Error: the " << ex.what() << " argument is invalid.\n\n";
-    std::cerr << options.help() << '\n';
+  } catch (const MissingArgumentError &ex) {
+    std::cerr << "Error: missing " << ex.what() << " argument(s).\n";
+    return 1;
+  } catch (const InvalidArgumentError &ex) {
+    std::cerr << "Error: invalid " << ex.what() << " argument(s).\n";
     return 1;
   } catch (const std::exception &ex) {
-    std::cerr << "Unexpected error: " << ex.what() << "\n\n";
-    std::cerr << options.help() << '\n';
+    std::cerr << "Unexpected error: " << ex.what() << '\n';
     return 2;
   } catch (...) {
     std::cerr << "Unknown error!\n";
-    return 1;
+    return 2;
   }
 
   return 0;
@@ -189,9 +187,9 @@ App::Action App::parseActionArgument(cxxopts::ParseResult &args) {
 
     // TODO map: use this in the framework: return Action::READ;
   } catch (const cxxopts::option_has_no_value_exception &ex) {
-    throw std::invalid_argument("action");
+    throw MissingArgumentError("action");
   } catch (const std::out_of_range &ex) {
-    throw std::invalid_argument("action");
+    throw InvalidArgumentError("action");
   }
 }
 
@@ -282,9 +280,19 @@ bool App::performCreate(Wallet &wObj, cxxopts::ParseResult &args) {
         std::string value;
 
         try {
-          key = e.substr(0, e.find(','));
-          value = e.substr(e.find(',') + 1);
-        } catch (const std::out_of_range &ex) { /* do nothing */
+          auto ePos = e.find(',');
+          if (ePos != std::string::npos) {
+            key = e.substr(0, ePos);
+            value = e.substr(ePos + 1);
+          } else {
+            value = "";
+          }
+        } catch (const std::out_of_range &ex) {
+          throw InvalidArgumentError("entry");
+        }
+
+        if (key.empty()) {
+          throw InvalidArgumentError("entry");
         }
 
         iObj.addEntry(key, value);
@@ -294,28 +302,60 @@ bool App::performCreate(Wallet &wObj, cxxopts::ParseResult &args) {
     return true;
   }
 
-  throw std::runtime_error("must provide a category, item or entry to create");
+  throw MissingArgumentError("category, item or entry");
 }
 
-bool App::performRead(Wallet &wObj, cxxopts::ParseResult &args) noexcept {
-  if (args.count("category")) {
-    const std::string c = args["category"].as<std::string>();
+bool App::performRead(Wallet &wObj, cxxopts::ParseResult &args) {
+  const bool hasCategory = args.count("category");
+  const bool hasItem = args.count("item");
+  const bool hasEntry = args.count("entry");
 
-    if (args.count("item")) {
-      const std::string i = args["item"].as<std::string>();
+  try {
+    if (hasCategory) {
+      const std::string c = args["category"].as<std::string>();
 
-      if (args.count("entry")) {
-        const std::string e = args["entry"].as<std::string>();
+      if (c.empty()) {
+        throw InvalidArgumentError("category");
+      }
 
-        std::cout << getJSON(wObj, c, i, e);
+      if (hasItem) {
+        const std::string i = args["item"].as<std::string>();
+
+        if (i.empty()) {
+          throw InvalidArgumentError("item");
+        }
+
+        if (hasEntry) {
+          const std::string e = args["entry"].as<std::string>();
+
+          if (e.empty()) {
+            throw InvalidArgumentError("entry");
+          }
+
+            std::cout << getJSON(wObj, c, i, e);
+        } else {
+          std::cout << getJSON(wObj, c, i);
+        }
       } else {
-        std::cout << getJSON(wObj, c, i);
+        if (hasEntry) {
+          throw MissingArgumentError("item");
+        }
+
+        std::cout << getJSON(wObj, c);
       }
     } else {
-      std::cout << getJSON(wObj, c);
+      if (hasItem || hasEntry) {
+        throw MissingArgumentError("category");
+      }
+
+      std::cout << getJSON(wObj);
     }
-  } else {
-    std::cout << getJSON(wObj);
+  } catch(const NoCategoryError &ex) {
+    throw InvalidArgumentError("category");
+  } catch(const NoItemError &ex) {
+    throw InvalidArgumentError("item");
+  } catch(const NoEntryError &ex) {
+    throw InvalidArgumentError("entry");
   }
 
   return true;
@@ -348,6 +388,10 @@ bool App::performUpdate(Wallet &wObj, cxxopts::ParseResult &args) {
         throw std::runtime_error("could not extract new category ident");
       }
 
+      if (new_.empty()) {
+        throw InvalidArgumentError("category");
+      }
+
       try {
         Category &cObj = wObj.getCategory(old_);
         cObj.setIdent(new_);
@@ -356,10 +400,10 @@ bool App::performUpdate(Wallet &wObj, cxxopts::ParseResult &args) {
         }
         c = new_;
       } catch (const std::out_of_range &ex) {
-        throw std::out_of_range("unknown category");
+        throw InvalidArgumentError("category");
       }
     } else if (!wObj.containsCategory(c)) {
-      throw std::out_of_range("unknown category");
+      throw InvalidArgumentError("category");
     }
 
     Category &cObj = wObj.getCategory(c);
@@ -376,6 +420,10 @@ bool App::performUpdate(Wallet &wObj, cxxopts::ParseResult &args) {
           throw std::runtime_error("could not extract new item ident");
         }
 
+        if (new_.empty()) {
+          throw InvalidArgumentError("item");
+        }
+
         Item &iObj = cObj.getItem(old_);
         iObj.setIdent(new_);
         if (!cObj.addItem(iObj) || !cObj.deleteItem(old_)) {
@@ -383,7 +431,7 @@ bool App::performUpdate(Wallet &wObj, cxxopts::ParseResult &args) {
         }
         i = new_;
       } else if (!cObj.containsItem(i)) {
-        throw std::out_of_range("unknown item");
+        throw InvalidArgumentError("item");
       }
 
       Item &iObj = cObj.getItem(i);
@@ -396,27 +444,27 @@ bool App::performUpdate(Wallet &wObj, cxxopts::ParseResult &args) {
 
         if (ePos != std::string::npos) {
           // change key (or key and value)
-          try {
-            std::string newkey_, val_;
-            if (evPos != std::string::npos) {
-              old_ = e.substr(0, ePos);
-              newkey_ = e.substr(ePos + 1, evPos - ePos - 1);
-              val_ = e.substr(evPos + 1);
-            } else {
-              old_ = e.substr(0, ePos);
-              newkey_ = e.substr(ePos + 1);
-              val_ = iObj.getEntry(old_);
-            }
+          std::string newkey_, val_;
+          if (evPos != std::string::npos) {
+            old_ = e.substr(0, ePos);
+            newkey_ = e.substr(ePos + 1, evPos - ePos - 1);
+            val_ = e.substr(evPos + 1);
+          } else {
+            old_ = e.substr(0, ePos);
+            newkey_ = e.substr(ePos + 1);
+            val_ = iObj.getEntry(old_);
+          }
 
-            try {
-              // this will overwrite anything at newkey_
-              iObj.addEntry(newkey_, val_);
-              iObj.deleteEntry(old_);
-            } catch(const std::exception& ex) {
-              throw std::runtime_error("could not update entry key or key and value");
-            }
-          } catch (const std::out_of_range &ex) {
-            throw std::runtime_error("could not extract new entry data");
+          if (newkey_.empty()) {
+            throw InvalidArgumentError("entry");
+          }
+
+          try {
+            // this will overwrite anything at newkey_
+            iObj.addEntry(newkey_, val_);
+            iObj.deleteEntry(old_);
+          } catch(const std::exception& ex) {
+            throw std::runtime_error("could not update entry key or key and value");
           }
         } else if (evPos != std::string::npos) {
           // change value only
@@ -439,7 +487,7 @@ bool App::performUpdate(Wallet &wObj, cxxopts::ParseResult &args) {
     return true;
   }
 
-  throw std::runtime_error("must provide a category, item or entry to update");
+  throw MissingArgumentError("category, item or entry");
 }
 
 // If there is a category, item, and entry key, delete just the entry
@@ -454,8 +502,8 @@ bool App::performDelete(Wallet &wObj, cxxopts::ParseResult &args) {
   if (args.count("category")) {
     const std::string c = args["category"].as<std::string>();
 
-    if (!wObj.containsCategory(c)) {
-      throw std::invalid_argument("category");
+    if (c.empty() ||!wObj.containsCategory(c)) {
+        throw InvalidArgumentError("category");
     }
 
     Category &cObj = wObj.getCategory(c);
@@ -463,8 +511,8 @@ bool App::performDelete(Wallet &wObj, cxxopts::ParseResult &args) {
     if (args.count("item")) {
       const std::string i = args["item"].as<std::string>();
 
-      if (!cObj.containsItem(i)) {
-        throw std::invalid_argument("item");
+      if (c.empty() ||!cObj.containsItem(i)) {
+        throw InvalidArgumentError("item");
       }
 
       Item &iObj = cObj.getItem(i);
@@ -473,8 +521,8 @@ bool App::performDelete(Wallet &wObj, cxxopts::ParseResult &args) {
         // delete entry
         const std::string e = args["entry"].as<std::string>();
 
-        if (!iObj.containsEntry(e)) {
-          throw std::invalid_argument("entry");
+        if (e.empty() || !iObj.containsEntry(e)) {
+          throw InvalidArgumentError("entry");
         }
 
         return iObj.deleteEntry(e);
@@ -488,5 +536,5 @@ bool App::performDelete(Wallet &wObj, cxxopts::ParseResult &args) {
     }
   }
 
-  throw std::runtime_error("must provide a category, item or entry to delete");
+  throw MissingArgumentError("category, item or entry");
 }

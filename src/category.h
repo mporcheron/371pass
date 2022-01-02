@@ -76,7 +76,8 @@ public:
 
 struct AddItemError : public std::runtime_error {
   explicit AddItemError(const std::string &iIdent)
-      : std::runtime_error("could not add item:" + iIdent) {
+      : std::runtime_error("could not add item with identifier '" + iIdent +
+                           "'") {
     /* do nothing */
   }
 
@@ -85,7 +86,7 @@ struct AddItemError : public std::runtime_error {
 
 struct NoItemError : public std::out_of_range {
   explicit NoItemError(const std::string &iIdent)
-      : std::out_of_range("unknown item:" + iIdent) {
+      : std::out_of_range("unknown item with identifier '" + iIdent + "'") {
     /* do nothing */
   }
 

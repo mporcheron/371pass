@@ -123,7 +123,7 @@ struct AddCategoryError : public std::runtime_error {
 
 struct NoCategoryError : public std::out_of_range {
   explicit NoCategoryError(const std::string &cIdent)
-      : std::out_of_range("unknown category:" + cIdent) {
+      : std::out_of_range("unknown category with identifier '" + cIdent + "'") {
     /* do nothing */
   }
 

@@ -50,7 +50,7 @@ cxxopts::Options cxxoptsSetup();
 App::Action parseActionArgument(cxxopts::ParseResult &args);
 
 bool performCreate(Wallet &wObj, cxxopts::ParseResult &args);
-bool performRead(Wallet &wObj, cxxopts::ParseResult &args) noexcept;
+bool performRead(Wallet &wObj, cxxopts::ParseResult &args);
 bool performUpdate(Wallet &w, cxxopts::ParseResult &args);
 bool performDelete(Wallet &w, cxxopts::ParseResult &args);
 
@@ -59,6 +59,24 @@ std::string getJSON(Wallet &w, const std::string &c);
 std::string getJSON(Wallet &w, const std::string &c, const std::string &i);
 std::string getJSON(Wallet &wObj, const std::string &c, const std::string &i,
                     const std::string &e);
+
+struct InvalidArgumentError : public std::invalid_argument {
+  explicit InvalidArgumentError(const std::string &argument)
+      : std::invalid_argument(argument) {
+    /* do nothing */
+  }
+
+  ~InvalidArgumentError() override = default;
+};
+
+struct MissingArgumentError : public std::invalid_argument {
+  explicit MissingArgumentError(const std::string &argument)
+      : std::invalid_argument(argument) {
+    /* do nothing */
+  }
+
+  ~MissingArgumentError() override = default;
+};
 
 } // namespace App
 

@@ -83,7 +83,7 @@ public:
 
 struct NoEntryError : public std::out_of_range {
   explicit NoEntryError(const std::string &key)
-      : std::out_of_range("unknown entry:" + key) {
+      : std::out_of_range("unknown entry with key '" + key + "'") {
     /* do nothing */
   }
 
