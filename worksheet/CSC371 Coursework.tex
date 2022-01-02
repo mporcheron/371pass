@@ -66,8 +66,8 @@
 \newcommand\mysubmissionsurl{https://csautograder.swansea.ac.uk/web/project/31?current_tab=my_submissions}
 \newcommand\totalmarks{{100} }
 
-% \hyphenpenalty 10000
-% \exhyphenpenalty 10000
+\hyphenpenalty 10000
+\exhyphenpenalty 10000
 
 
 \begin{document}
@@ -75,15 +75,15 @@
 \maketitle
 
 
-You must submit your coursework by the due date listed on Canvas and CS Autograder at \textbf{11:59pm} to \textbf{\submissionlink{}} (not Canvas!). Feedback for your final submission will be provided by email to you university email address.
+You must submit your coursework by the due date listed on Canvas and CS Autograder at \textbf{11:59pm} to \textbf{\submissionlink{}} (not Canvas!). Feedback for your final submission will be provided by email to your university email address.
 
 You can submit to Autograder a maximum of 10 times per day. Note that the results from Autograder may take a while to generate, especially if there are many simultaneous submissions, thus you are strongly discouraged from making last‑minute changes and submissions just before the deadline. We will only take the last submission to Autograder, thus if you submit close to the deadline, your results may come after the deadline and may be lower if you broke something!
 
 \textbf{Please test that \autograderlink{} works for you now} by uploading the coursework framework. Some users occasionally encounter system errors with Autograder that seem to be caused by cookies. If this happens to you, try logging into Autograder in a private browsing/incognito window.
 
-This coursework is worth 100 marks, and equates to 20\% of your module grade.
+This coursework is worth \totalmarks{} marks and equates to 20\% of your module grade.
 
-Please read this entire document through from start to finish before beginning to work on this assignment and before asking questions about the coursework. If anything is ambiguous or unclear, then you should seek clarification by posting in the \href{https://canvas.swansea.ac.uk/courses/24793/discussion_topics/217912}{Canvas group discussions for the coursework}.
+Please read this entire document from start to finish before beginning to work on this assignment and before asking questions about the coursework. If anything is ambiguous or unclear, then you should seek clarification by posting in the \href{https://canvas.swansea.ac.uk/courses/24793/discussion_topics/217912}{Canvas group discussions for the coursework}.
 
 
 
@@ -105,7 +105,7 @@ By submitting this coursework, you state that you fully understand and are compl
 
 
 \newpage\section*{About this coursework}\label{sec:about}
-As a software engineer you will often find yourself working within a team of developers, following a specification of what is being collectively built is designed via steering committee decisions or senior design architects, potentially in collaboration with clients. 
+As a software engineer, you will often find yourself working within a team of developers, following a specification of what is being collectively built is designed via steering committee decisions or senior design architects, potentially in collaboration with clients. 
 
 \subsection*{Learning objectives}
 This coursework is designed to simulate the sorts of things you may face in an industry job. Namely, you may have to complete code, using someone else’s code as a starter. Unfortunately, decisions about how your program should work may well be made for you already. Someone else may have also selected which external libraries you can and cannot use (often corporations have sets of preferred tools). These are all realistic challenges that should not be overlooked. It can be challenging to code using someone else’s framework, and using third party libraries will require you to read documentation and even experiment with different ideas to figure out how to use them correctly. Through completing this coursework, you should develop an appreciation of how coding in industry is likely to unfold.
@@ -194,7 +194,7 @@ Studying these files, along with the documentation in the provided source code a
 Although you should generally get the same output with whichever compiler you use, your code will be tested using the GNU Compiler Collection 10.2.
 
 \subsubsection*{Testing your code on Autograder}
-The CS Autograder service, which is the main submission process for this module, uses GCC 10.2. You can submit your coursework up to 10 times a day up to the deadline. The service will compile and run your code against the provided the unit tests. You will be able to see the results of these tests, allowing you to refine your submission. Due to the number of students on this module, it may take a while for test results to be generated. I would strongly discourage you from submitting to Autograder close to the deadline as demand will be high, and your results may arrive after the deadline (this happened last year!).
+The CS Autograder service, which is the main submission process for this module, uses GCC 10.2. You can submit your coursework up to 10 times a day up to the deadline. The service will compile and run your code against the provided unit tests. You will be able to see the results of these tests, allowing you to refine your submission. Due to the number of students on this module, it may take a while for test results to be generated. I would strongly discourage you from submitting to Autograder close to the deadline as demand will be high, and your results may arrive after the deadline (this happened last year!).
 
 
 
@@ -231,7 +231,7 @@ Your program must read in a series of program/command line arguments (not \textt
     
         \item If the \texttt{action} program argument is \emph{update}, and you want to rename an item, then the item argument should be in the format \\\texttt{oldidentifier:newidentifier} such that your program will rename the item with identifier \texttt{oldidentifier} to \texttt{newidentifier} in the category specified by the \texttt{category} argument. If successful, your program will output nothing and return an exit code of 0. If such an item does not exist, output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
     
-        \item If the \texttt{action} program argument is \emph{delete} and there is an item in the database with the identifier equal to the value of the \texttt{item} argument in the category specified by the \texttt{category} argument, delete it. If successful, your program should not output anything and return an exit code of \texttt{0}. If not succesful, (i.e., no item exists), output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
+        \item If the \texttt{action} program argument is \emph{delete} and there is an item in the database with the identifier equal to the value of the \texttt{item} argument in the category specified by the \texttt{category} argument, delete it. If successful, your program should not output anything and return an exit code of \texttt{0}. If not successful, (i.e., no item exists), output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
         \end{itemize}
 
     \item[\texttt{--entry value}]
@@ -244,7 +244,7 @@ Your program must read in a series of program/command line arguments (not \textt
     
         \item If the \texttt{action} program argument is \emph{update}, and you want to rename an entry, then the entry argument should be in the format \texttt{name:Person} such that your program will rename the entry with key \texttt{name} to \texttt{Person} in the item and category specified by the \texttt{item} and \texttt{category} arguments. If you wish to update the value of an entry, the entry argument should be in the format \texttt{name,Albert} such that your program will update the entry with key \texttt{name} to have value \texttt{Albert}. If you wish to update the key and value of an entry, then the \texttt{entry} argument should be in the format \texttt{name:Person,Albert} such that your program will update the entry with key \texttt{name} to have key \texttt{Person} and value \texttt{Albert}. If successful, your program will output nothing and return an exit code of 0.  If such an entry does not exist, output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
     
-        \item If the \texttt{action} program argument is \emph{delete} and there is an entry in the database with the key equal to the value of the \texttt{entry} argument in the item and category specified by the \texttt{item} and \texttt{category} arguments, delete it. If successful, your program should not output anything and return an exit code of \texttt{0}. If not succesful, (i.e., no item exists), output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
+        \item If the \texttt{action} program argument is \emph{delete} and there is an entry in the database with the key equal to the value of the \texttt{entry} argument in the item and category specified by the \texttt{item} and \texttt{category} arguments, delete it. If successful, your program should not output anything and return an exit code of \texttt{0}. If not successful, (i.e., no item exists), output an error message to \texttt{stderr} and return an exit code of \texttt{1}.
         \end{itemize}
     
     \item[\texttt{-h} or \texttt{--help}]
@@ -254,7 +254,7 @@ Your program must read in a series of program/command line arguments (not \textt
 Note that as a result of the above, category and item identifiers cannot contain a colon (\texttt{:}) and entries cannot contain a colon (\texttt{:}) or a comma (\texttt{,}) in their key or value. This is simply a design limitiation and you should not worry about it. Your code will \underline{not} be tested in this situations.
 
 \subsection*{Expected outputs}\label{sec:cwk outputs}
-Below are a number of sample commands and outputs expected using the sample \texttt{database.json} file provided in the coursework framework. Ignore line breaks in the terminal output. Your program will be tested with similar commands to the below using a semi-automated process. Although these outputs are not tested by the unit tests in the \emph{tests/} directory, you are expected to ensure you program has outputs as below.
+Below are a number of sample commands and outputs expected using the sample \texttt{database.json} file provided in the coursework framework. Ignore line breaks in the terminal output. Your program will be tested with similar commands to the below using a semi-automated process. Although these outputs are not tested by the unit tests in the \emph{tests/} directory, you are expected to ensure your program has outputs as below.
 
 \begin{Verbatim}[formatcom=\bfseries]
 $ ./bin/371pass
@@ -614,7 +614,7 @@ Three external libraries have been included in the coursework in files with a na
 
 Below is an abbreviated list of tasks you need to complete, designed to help you structure your progress. The source files provided include extensive comments that explain each function. The test suite is written such that it provides an explanation for all inputs and outputs for each test.
 
-Note, even if you do not complete all the entire coursework, it is still possible to score very well on the coursework. I strongly encourage you to focus on producing good, clean, safe code for some of the tasks than sloppy code for all of them (the latter will potentially lead to a lower mark!).
+Note, even if you do not complete the entire coursework, it is still possible to score very well on the coursework. I strongly encourage you to focus on producing good, clean, safe code for some of the tasks than sloppy code for all of them (the latter will potentially lead to a lower mark!).
 
 
 \subsection*{1. Add your student number}\label{sec:tasks student-num}
@@ -646,12 +646,12 @@ Some functions do not have unit tests that cover them, and some functionality of
 
 
 \subsection*{6. Edit, edit, edit!}\label{sec:tasks edit}
-Every book you've read, every set of lecture slides you've glanced over, and every program's source code you've used have all been \emph{edited}. Very few programs are perfect first time—look over your code, think through if you're doing things the right way. Read the documentation again and decide whether your code meets what is expected. Write additional tests, or try out different program arguments. For many of you, this will be one of your last pieces of software you write in your degree, and at this point, you should have an appreciation for programming as a craft.
+Every book you've read, every set of lecture slides you've glanced over, and every program's source code you've used have all been \emph{edited}. Very few programs are perfect first time—look over your code, think through if you're doing things the right way. Read the documentation again and decide whether your code meets what is expected. Write additional tests, or try out different program arguments. For many of you, this will be one of the last pieces of software you write in your degree, and at this point, you should have an appreciation for programming as a craft.
 
 
 
 \section*{Submission instructions}
-You \textbf{should} modify the \texttt{README} file in this directory to concisely explain any of the known caveats or issues with your implementation that you would like to be known during marking.
+You should modify the \texttt{README} file in this directory to concisely explain any of the known caveats or issues with your implementation that you would like to be known during marking.
 
 You must submit your code to \submissionlink{} before the deadline. Autograder only accepts specific files and will ignore any unneeded files. Autograder does not accept directories or ZIP files—you must upload your .cpp and .h files and your README.md file. 
 
