@@ -674,13 +674,19 @@ The assignment is graded out of 100 marks:
 
 \noindent{}\textbf{35 marks} are for good coding practice, and awarded in independently of the completeness marks above. You must produce clean, concise, and readable code. These marks are awarded in a negative marking approach (i.e., you lose marks for bad coding practice) as by now, you should always be working towards good coding standards. A non-exhaustive list of things that will you will lose marks for:
 \begin{itemize}
-    \item Code that compiles with any warnings in GCC (e.g., using the \texttt{-pedantic} and \texttt{-Wall} flags).
+    \item Code that compiles with any warnings in GCC (e.g., using the \texttt{-pedantic} and \texttt{-Wall} flags)
 
     \item Poor or inconsistent choice of variable names (e.g., \hyperlink{https://en.wikipedia.org/wiki/Variable_shadowing}{shadowing variables}), or poorly formatted, non-indented, or incorrectly structured code
 
-    \item Code that is inefficient/requires excessive computation
+    \item Excessive or non-existent use of commenting. Use comments to highlight code you have written, or code which may not have an obvious meaning. This can help the marker identify places to award marks. You should assume the marker knows C++, so do not need to comment obvious code.
+
+    \item Code that is inefficient/requires excessive computation including using `\texttt{using namespace std}'
 
     \item Incorrect or missing usage of \texttt{const} keyword for parameter types, return types, and member function declarations
+
+        \begin{itemize}
+            \item Or using a cast to remove a qualifier such as \texttt{const} 
+    \end{itemize}
 
     \item Incorrect or unsafe use of pointers and references, or unsafe memory management
     % \begin{itemize}
@@ -700,10 +706,9 @@ The assignment is graded out of 100 marks:
             \item It is infeasible to grade 160 assignments unless they are consistently formatted and each part of your implementation can be found predictably
     \end{itemize}
 
-    \item Excessive or non-existent use of commenting. Use comments to highlight code you have written, or code which may not have an obvious meaning. This can help the marker identify places to award marks. You should assume the marker knows C++, so do not need to comment obvious code.
 \end{itemize}
 
-You may gain marks for adding additional functionality to your programs beyond the specification, but be careful not to break any of the existing tests.
+You may gain marks for designing your implementation well, making good use of the Standard Library, and adding additional functionality to your programs beyond the specification, but be careful not to break any of the existing tests.
 
 
 \end{document}
