@@ -122,7 +122,7 @@ Category &Wallet::getCategory(const std::string &cIdent) {
 //  wObj.newCategory("categoryIdent");
 //  wObj.deleteCategory("categoryIdent");
 bool Wallet::deleteCategory(const std::string &cIdent) {
-  if (categories.erase(cIdent) == 0) {
+  if (categories.count(cIdent) == 0 || categories.erase(cIdent) == 0) {
     throw NoCategoryError(cIdent);
   }
   return true;

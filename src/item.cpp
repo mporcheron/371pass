@@ -80,11 +80,10 @@ const std::string &Item::getEntry(const std::string &key) const {
 //  iObj.addEntry("key", "value");
 //  iObj.deleteEntry("key");
 bool Item::deleteEntry(const std::string &key) {
-  try {
-    return entries.erase(key) == 1;
-  } catch (const std::out_of_range &ex) {
+	if (entries.count(key) == 0 || entries.erase(key) == 0) {
     throw NoEntryError(key);
-  }
+	}
+	return true;
 }
 
 // TODO Write an == operator overload for the Item class, such that two

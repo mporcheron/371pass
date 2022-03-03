@@ -120,7 +120,7 @@ Item &Category::getItem(const std::string &iIdent) {
 //  cObj.newItem("itemIdent");
 //  bool result = cObj.deleteItem("itemIdent");
 bool Category::deleteItem(const std::string &iIdent) {
-  if (items.erase(iIdent) == 0) {
+  if (items.count(iIdent) == 0 || items.erase(iIdent) == 0) {
     throw NoItemError(iIdent);
   }
   return true;
