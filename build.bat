@@ -17,7 +17,7 @@ IF %testStr%==test (
   SET executable=%bin_dir%\371pass-test.exe
 
   IF NOT EXIST %bin_dir%\catch.o (
-     g++ --std=c++14 -c .\%src_dir%\lib_catch_main.hpp -o %bin_dir%\catch.o
+     g++ --std=c++14 -c %src_dir%\lib_catch_main.cpp -o %bin_dir%\catch.o
   )
 )
 
