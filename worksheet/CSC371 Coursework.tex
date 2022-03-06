@@ -97,15 +97,25 @@ The university takes all cases of unfair practice seriously. The code you produc
 By submitting this coursework, you state that you fully understand and are complying with the University’s policy on Academic Integrity and Academic Misconduct. The policy can be found at: \url{https://myuni.swansea.ac.uk/academic-life/academic-misconduct}.
 
 
-\section*{Changelog}\label{sec:changelog}
+\newpage\section*{Changelog}\label{sec:changelog}
 \begin{description}
-    \item[v1.0   --- 28th Feb 2022]
-			Coursework released
+    \item[v1.1.2 --- 6th Mar 2022] Update worksheet:\newline
+			- \texttt{--database} argument should be \texttt{--db} in the worksheet (Thanks Rob Wealthall)
+
+    \item[v1.1.1 --- 3rd Mar 2022] Missing comments for size() and empty():\newline
+			- Add missing comments for \texttt{size()} and \texttt{empty()} to \texttt{Item} and \texttt{Category} classes (Thanks Ali Kellaway)
+
+    \item[v1.1.0 --- 3rd Mar 2022] Update test2.cpp:\newline
+			- Update \emph{test2.cpp} to correctly not expect an exception (Thanks Samuel Roach)
+
     \item[v1.0.1 --- 28th Feb 2022] Minor fixes to framework and worksheet:\newline
 			- Clarify student ID only needs to be in editable .cpp/.h files\newline
 		  - Update Catch2 framework\newline
 		  - Remove erroneous semicolon from 371pass.h\newline
 		  - Fix building with build.bat (Windows only)
+
+    \item[v1.0   --- 28th Feb 2022]
+			Coursework released
 \end{description}
 
 
@@ -208,7 +218,7 @@ The CS Autograder service, which is the main submission process for this module,
 Your program must read in a series of program/command line arguments (not \texttt{stdin}!) and parse them. A library has been included that will handle and convert these values to \texttt{std::string} objects inside \emph{371pass.cpp}. You will have to write additional code in this file to fully implement the functionality described below. See \hyperref[sec:cwk outputs]{the next section} for examples of the various outputs and error messages your program should give in different situations. 
 
 \begin{labeling}{ \texttt{--category value} }
-    \item[\texttt{--database value}]
+    \item[\texttt{--db value}]
     Filename of the 371pass database (the default value \emph{database.json} is assumed if one is not provided)
 
     \item[\texttt{--action value}]
